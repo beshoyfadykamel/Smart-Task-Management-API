@@ -25,6 +25,8 @@ class RegisterController extends Controller
             'expires_at' => now()->addDays(30),
         ]);
 
+        $user->sendEmailVerificationNotification();
+
         $data = [
             'user' => new UserResource($user),
             'token' => $token->plainTextToken,
