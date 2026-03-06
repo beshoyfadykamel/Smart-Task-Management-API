@@ -19,6 +19,9 @@ class EmailVerificationController extends Controller
 
     public function resend(Request $request)
     {
+        if ($request->user()->hasVerifiedEmail()) {
+            return $this->error('Email already verified', 400, 400);
+        }
         $request->user()->sendEmailVerificationNotification();
         return $this->success([], 'Verification email resent' , 200);
     }
