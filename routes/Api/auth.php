@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\Auth\EmailVerificationController;
+use App\Http\Controllers\Api\Auth\ForgotPasswordController;
 use App\Http\Controllers\Api\Auth\LoginController;
 use App\Http\Controllers\Api\Auth\LogoutController;
 use App\Http\Controllers\Api\Auth\RegisterController;
@@ -13,6 +14,10 @@ Route::prefix('auth')->group(function () {
     Route::middleware('guest:sanctum', 'throttle:5,1')->group(function () {
         Route::post('/register', [RegisterController::class, 'register'])->name('register');
         Route::post('/login', [LoginController::class, 'login'])->name('login');
+        Route::post('/forgot-password', [ForgotPasswordController::class, 'forgotPassword'])
+            ->middleware('throttle:5,1')->name('password.forgot');
+        Route::post('/reset-password', [ForgotPasswordController::class, 'resetPassword'])
+            ->name('password.reset')->middleware('throttle:5,1');
     });
 
 
