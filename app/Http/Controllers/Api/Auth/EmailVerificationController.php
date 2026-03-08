@@ -20,7 +20,7 @@ class EmailVerificationController extends Controller
     public function verify(EmailVerificationRequest $request)
     {
         $request->fulfill();
-        return $this->success([], 'Email verified successfully' , 200);
+        return $this->success([], 'Email verified successfully', 200);
     }
 
     /**
@@ -35,6 +35,6 @@ class EmailVerificationController extends Controller
             return $this->error('Email already verified', 400, 400);
         }
         $request->user()->sendEmailVerificationNotification();
-        return $this->success([], 'Verification email resent' , 200);
+        return $this->success([], 'Verification email resent', 200);
     }
 }

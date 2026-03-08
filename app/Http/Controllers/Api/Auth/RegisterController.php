@@ -42,6 +42,5 @@ class RegisterController extends Controller
         ];
 
         return $this->success($data, "User registered successfully", 201);
-    
     }
 }
