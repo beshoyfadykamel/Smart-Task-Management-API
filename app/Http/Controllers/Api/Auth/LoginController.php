@@ -42,6 +42,6 @@ class LoginController extends Controller
             'token' => $token->plainTextToken,
         ];
 
-        return $this->success($data, 'User logged in successfully', 201);
+        return $this->success($data, 'User logged in successfully', 200);
     }
 }
