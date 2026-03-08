@@ -38,6 +38,11 @@ class ProfileController extends Controller
 
         $validatedData = $request->validated();
 
+        // If email changed, reset verification
+        if (!empty($validatedData['email']) && $validatedData['email'] !== $user->email) {
+            $user->email_verified_at = null;
+        }
+
         // If password is being updated, logout from all other devices
         if (!empty($validatedData['password'])) {
             $validatedData['password'] = Hash::make($validatedData['password']);
@@ -46,10 +51,12 @@ class ProfileController extends Controller
             $user->tokens()
                 ->where('id', '!=', $request->user()->currentAccessToken()->id)
                 ->delete();
+        } else {
+            unset($validatedData['password']);
         }
 
         $user->update($validatedData);
 
-        return $this->success(new ProfileResource($user), 'Profile updated successfully', 200);
+        return $this->success(new ProfileResource($user->fresh()), 'Profile updated successfully', 200);
     }
 }
