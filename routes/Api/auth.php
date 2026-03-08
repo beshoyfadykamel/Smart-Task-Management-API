@@ -23,7 +23,8 @@ Route::prefix('auth')->group(function () {
 
     Route::middleware('auth:sanctum')->group(function () {
 
-        Route::post('/logout', [LogoutController::class, 'logout'])->middleware('auth:sanctum')->name('logout');
+        Route::post('/logout', [LogoutController::class, 'logout'])->name('logout');
+        Route::post('/logout-all', [LogoutController::class, 'logoutAll'])->name('logout.all');
 
         Route::get('/email/verify/{id}/{hash}', [EmailVerificationController::class, 'verify'])
             ->middleware(['signed', 'throttle:6,1'])
