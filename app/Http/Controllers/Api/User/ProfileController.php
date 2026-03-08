@@ -38,14 +38,18 @@ class ProfileController extends Controller
 
         $validatedData = $request->validated();
 
+        if (!empty($validatedData['email']) && $validatedData['email'] !== $user->email) {
+            $validatedData['email_verified_at'] = null;
+        }
+
         // If password is being updated, logout from all other devices
         if (!empty($validatedData['password'])) {
-            $validatedData['password'] = Hash::make($validatedData['password']);
-
             // Keep current token, delete all others
             $user->tokens()
                 ->where('id', '!=', $request->user()->currentAccessToken()->id)
                 ->delete();
+        }else{
+            unset($validatedData['password']);
         }
 
         $user->update($validatedData);
