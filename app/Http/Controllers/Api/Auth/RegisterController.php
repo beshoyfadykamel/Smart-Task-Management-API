@@ -12,6 +12,15 @@ use Illuminate\Support\Facades\Hash;
 class RegisterController extends Controller
 {
     use ApiResponse;
+
+    /**
+     * Register a new user
+     * Sends email verification notification
+     * Token expires after 30 days
+     * 
+     * @param RegisterRequest $request
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function register(RegisterRequest $request)
     {
         $user = User::create([

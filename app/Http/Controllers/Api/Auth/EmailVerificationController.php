@@ -11,12 +11,24 @@ class EmailVerificationController extends Controller
 {
     use ApiResponse;
 
+    /**
+     * Verify user's email address
+     * 
+     * @param EmailVerificationRequest $request
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function verify(EmailVerificationRequest $request)
     {
         $request->fulfill();
         return $this->success([], 'Email verified successfully' , 200);
     }
 
+    /**
+     * Resend email verification notification
+     * 
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function resend(Request $request)
     {
         if ($request->user()->hasVerifiedEmail()) {

@@ -12,6 +12,14 @@ use Illuminate\Support\Facades\Hash;
 class LoginController extends Controller
 {
     use ApiResponse;
+
+    /**
+     * Login user and generate access token
+     * Token expires after 30 days
+     * 
+     * @param LoginRequest $request
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function login(LoginRequest $request)
     {
 
