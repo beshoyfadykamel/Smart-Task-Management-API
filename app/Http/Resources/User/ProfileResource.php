@@ -8,8 +8,10 @@ use Illuminate\Http\Resources\Json\JsonResource;
 class ProfileResource extends JsonResource
 {
     /**
-     * Transform the resource into an array.
+     * Transform the user profile resource into an array.
+     * Returns detailed user profile info including verification status.
      *
+     * @param \Illuminate\Http\Request $request
      * @return array<string, mixed>
      */
     public function toArray(Request $request): array

@@ -8,8 +8,10 @@ use Illuminate\Http\Resources\Json\JsonResource;
 class UsersResource extends JsonResource
 {
     /**
-     * Transform the resource into an array.
+     * Transform the admin user resource into an array.
+     * Returns comprehensive user data for admin management.
      *
+     * @param \Illuminate\Http\Request $request
      * @return array<string, mixed>
      */
     public function toArray(Request $request): array

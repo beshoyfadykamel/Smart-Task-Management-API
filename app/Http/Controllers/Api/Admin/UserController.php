@@ -14,7 +14,12 @@ class UserController extends Controller
 {
     use ApiResponse;
 
-
+    /**
+     * List users with filters, sorting, and pagination.
+     *
+     * @param UsersFilterRequest $request
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function index(UsersFilterRequest $request)
     {
         $users = User::query()
@@ -35,13 +40,24 @@ class UserController extends Controller
         );
     }
 
-
+    /**
+     * Show a single user details.
+     *
+     * @param User $user
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function show(User $user)
     {
         return $this->success(new UsersResource($user), 'User retrieved successfully', 200);
     }
 
-
+    /**
+     * Update a user and reset verification when email changes.
+     *
+     * @param UsersUpdateRequest $request
+     * @param User $user
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function update(UsersUpdateRequest $request, User $user)
     {
         $validatedData = $request->validated();
@@ -56,15 +72,24 @@ class UserController extends Controller
         return $this->success(new UsersResource($user), 'User updated successfully', 200);
     }
 
-
+    /**
+     * Soft delete a user.
+     *
+     * @param User $user
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function destroy(User $user)
     {
         $user->delete();
         return $this->success(null, 'User deleted successfully', 200);
     }
 
-
-
+    /**
+     * List only soft-deleted users with filters and pagination.
+     *
+     * @param UsersFilterRequest $request
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function trashed(UsersFilterRequest $request)
     {
         $users = User::onlyTrashed()
@@ -85,6 +110,12 @@ class UserController extends Controller
         );
     }
 
+    /**
+     * Restore a soft-deleted user.
+     *
+     * @param User $user
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function restore(User $user)
     {
         if (!$user->trashed()) {
@@ -94,6 +125,12 @@ class UserController extends Controller
         return $this->success(new UsersResource($user), 'User restored successfully', 200);
     }
 
+    /**
+     * Permanently delete a soft-deleted user.
+     *
+     * @param User $user
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function forceDelete(User $user)
     {
         if (!$user->trashed()) {
