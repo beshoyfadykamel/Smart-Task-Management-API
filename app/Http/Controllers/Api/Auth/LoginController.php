@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Api\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\Auth\LoginRequest;
-use App\Http\Resources\Users\UserResource;
+use App\Http\Resources\User\UserResource;
 use App\Models\User;
 use App\Traits\Api\ApiResponse;
 use Illuminate\Support\Facades\Hash;
@@ -12,6 +12,14 @@ use Illuminate\Support\Facades\Hash;
 class LoginController extends Controller
 {
     use ApiResponse;
+
+    /**
+     * Login user and generate access token
+     * Token expires after 30 days
+     * 
+     * @param LoginRequest $request
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function login(LoginRequest $request)
     {
 
