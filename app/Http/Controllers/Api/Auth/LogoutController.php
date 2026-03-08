@@ -13,6 +13,9 @@ class LogoutController extends Controller
     /**
      * Logout from current device
      * Deletes only the current access token
+     * 
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
      */
     public function logout(Request $request)
     {
@@ -27,6 +30,9 @@ class LogoutController extends Controller
     /**
      * Logout from all devices
      * Deletes all access tokens for the user
+     * 
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
      */
     public function logoutAll(Request $request)
     {
