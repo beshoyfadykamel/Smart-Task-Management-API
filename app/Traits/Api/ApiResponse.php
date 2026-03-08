@@ -7,6 +7,14 @@ use Illuminate\Pagination\LengthAwarePaginator;
 
 trait ApiResponse
 {
+    /**
+     * Return a successful JSON response.
+     *
+     * @param mixed $data Response data
+     * @param string|null $message Success message
+     * @param int $code HTTP status code
+     * @return \Illuminate\Http\JsonResponse
+     */
     protected function success($data = null, $message = null, $code = 200)
     {
         return response()->json([
@@ -18,6 +26,14 @@ trait ApiResponse
         ], $code);
     }
 
+    /**
+     * Return an error JSON response.
+     *
+     * @param string|null $message Error message
+     * @param mixed $errors Validation errors or error details
+     * @param int $code HTTP status code
+     * @return \Illuminate\Http\JsonResponse
+     */
     protected function error($message = null, $errors = null, $code = 400)
     {
         return response()->json([
@@ -29,6 +45,16 @@ trait ApiResponse
         ], $code);
     }
 
+    /**
+     * Return a paginated success JSON response.
+     *
+     * @param \Illuminate\Pagination\LengthAwarePaginator $paginator
+     * @param \Illuminate\Http\Resources\Json\AnonymousResourceCollection $collection
+     * @param string $resourceKey Key name for the resource data in response
+     * @param string|null $message Success message
+     * @param int $code HTTP status code
+     * @return \Illuminate\Http\JsonResponse
+     */
     protected function successPaginated(
         LengthAwarePaginator $paginator,
         AnonymousResourceCollection $collection,

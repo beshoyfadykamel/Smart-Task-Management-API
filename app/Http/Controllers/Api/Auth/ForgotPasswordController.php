@@ -15,10 +15,10 @@ class ForgotPasswordController extends Controller
     use ApiResponse;
 
     /**
-     * Send password reset link to user's email
-    * 
-    * @param ForgotPasswordRequest $request
-    * @return \Illuminate\Http\JsonResponse
+     * Send password reset link to user's email.
+     * 
+     * @param ForgotPasswordRequest $request
+     * @return \Illuminate\Http\JsonResponse
      */
     public function forgotPassword(ForgotPasswordRequest $request)
     {
@@ -34,10 +34,10 @@ class ForgotPasswordController extends Controller
     }
 
     /**
-     * Reset user's password
-        * 
-        * @param ResetPasswordRequest $request
-        * @return \Illuminate\Http\JsonResponse
+     * Reset user's password.
+     * 
+     * @param ResetPasswordRequest $request
+     * @return \Illuminate\Http\JsonResponse
      */
     public function resetPassword(ResetPasswordRequest $request)
     {
