@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Controllers\Api\ProfileController;
+use App\Http\Controllers\Api\User\ProfileController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 

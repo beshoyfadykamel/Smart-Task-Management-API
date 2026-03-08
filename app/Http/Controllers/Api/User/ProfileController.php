@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Controllers\Api;
+namespace App\Http\Controllers\Api\User;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Api\ProfileRequest;
-use App\Http\Resources\Users\ProfileResource;
+use App\Http\Requests\Api\User\ProfileRequest;
+use App\Http\Resources\User\ProfileResource;
 use App\Traits\Api\ApiResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
