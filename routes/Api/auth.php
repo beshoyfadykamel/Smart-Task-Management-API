@@ -25,11 +25,11 @@ Route::prefix('auth')->group(function () {
         Route::post('/logout', [LogoutController::class, 'logout'])->name('logout');
         Route::post('/logout-all', [LogoutController::class, 'logoutAll'])->name('logout.all');
 
-        Route::get('/email/verify/{id}/{hash}', [EmailVerificationController::class, 'verify'])
-            ->middleware(['signed', 'throttle:6,1'])
-            ->name('verification.verify');
-
         Route::post('/email/resend', [EmailVerificationController::class, 'resend'])
             ->middleware(['throttle:6,1'])->name('verification.send');
     });
+
+    Route::get('/email/verify/{id}/{hash}', [EmailVerificationController::class, 'verify'])
+        ->middleware(['signed', 'throttle:6,1'])
+        ->name('verification.verify');
 });

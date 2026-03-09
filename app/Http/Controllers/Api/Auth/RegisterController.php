@@ -7,7 +7,6 @@ use App\Http\Requests\Api\Auth\RegisterRequest;
 use App\Http\Resources\User\UserResource;
 use App\Models\User;
 use App\Traits\Api\ApiResponse;
-use Illuminate\Support\Facades\Hash;
 
 class RegisterController extends Controller
 {
@@ -26,7 +25,7 @@ class RegisterController extends Controller
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
-            'password' => Hash::make($request->password),
+            'password' => $request->password,
         ]);
 
         $token = $user->createToken($user->name);

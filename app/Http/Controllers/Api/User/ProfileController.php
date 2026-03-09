@@ -7,7 +7,6 @@ use App\Http\Requests\Api\User\ProfileRequest;
 use App\Http\Resources\User\ProfileResource;
 use App\Traits\Api\ApiResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
 
 class ProfileController extends Controller
 {
@@ -45,8 +44,6 @@ class ProfileController extends Controller
 
         // If password is being updated, logout from all other devices
         if (!empty($validatedData['password'])) {
-            $validatedData['password'] = Hash::make($validatedData['password']);
-
             // Keep current token, delete all others
             $user->tokens()
                 ->where('id', '!=', $request->user()->currentAccessToken()->id)
