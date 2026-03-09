@@ -5,10 +5,13 @@ namespace App\Http\Controllers\Api\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\Admin\Users\UsersFilterRequest;
 use App\Http\Requests\Api\Admin\Users\UsersUpdateRequest;
+use App\Http\Requests\Api\Auth\RegisterRequest;
 use App\Http\Resources\Admin\UsersResource;
+use App\Http\Resources\User\UserResource;
 use App\Models\User;
 use App\Traits\Api\ApiResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
@@ -49,6 +52,31 @@ class UserController extends Controller
     public function show(User $user)
     {
         return $this->success(new UsersResource($user), 'User retrieved successfully', 200);
+    }
+
+    /**
+     * Create a new user.
+     *
+     * @param RegisterRequest $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+
+    public function store(RegisterRequest $request)
+    {
+
+        $user = User::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => Hash::make($request->password),
+        ]);
+        
+        $user->sendEmailVerificationNotification();
+
+        $data = [
+            'user' => new UsersResource($user),
+        ];
+
+        return $this->success($data, "User created successfully", 201);
     }
 
     /**
