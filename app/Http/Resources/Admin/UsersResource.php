@@ -22,6 +22,14 @@ class UsersResource extends JsonResource
             'email' => $this->email,
             'email_verified_at' => $this->email_verified_at,
             'status' => $this->status,
+            'deleted_at' => $this->whenNotNull($this->deleted_at),
+            'role' => $this->whenLoaded('roles', function () {
+                $role = $this->roles->first();
+                return $role ? $role->name : null;
+            }),
+            'permissions' => $this->whenLoaded('roles', function () {
+                return $this->getAllPermissions()->pluck('name')->values();
+            }),
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ];

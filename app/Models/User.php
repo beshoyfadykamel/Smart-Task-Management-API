@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use Spatie\Permission\Models\Role;
 use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable implements MustVerifyEmail
@@ -50,6 +51,16 @@ class User extends Authenticatable implements MustVerifyEmail
             'password' => 'hashed',
             'status' => 'boolean',
         ];
+    }
+
+    /**
+     * Load roles and permissions with selected columns.
+     *
+     * @return $this
+     */
+    public function loadRolesAndPermissions()
+    {
+        return $this->load(['roles:id,name,guard_name', 'permissions:id,name,guard_name']);
     }
 
     /**
@@ -134,5 +145,4 @@ class User extends Authenticatable implements MustVerifyEmail
         $direction = in_array($sort, ['asc', 'desc']) ? $sort : 'desc';
         return $query->orderBy('created_at', $direction);
     }
-
 }
