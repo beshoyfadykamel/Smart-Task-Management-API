@@ -10,21 +10,25 @@ class RolePermissionSeeder extends Seeder
 {
     public function run(): void
     {
-        Permission::create(['name' => 'create tasks']);
-        Permission::create(['name' => 'edit tasks']);
-        Permission::create(['name' => 'delete tasks']);
-        Permission::create(['name' => 'view tasks']);
+        // Permission::firstOrCreate(['name' => 'create users', 'guard_name' => 'sanctum']);
+        // Permission::firstOrCreate(['name' => 'edit users', 'guard_name' => 'sanctum']);
+        // Permission::firstOrCreate(['name' => 'delete users', 'guard_name' => 'sanctum']);
+        // Permission::firstOrCreate(['name' => 'view users', 'guard_name' => 'sanctum']);
 
-        $admin = Role::create(['name' => 'admin']);
-        $user = Role::create(['name' => 'user']);
+        // $superAdmin = Role::firstOrCreate(['name' => 'super_admin', 'guard_name' => 'sanctum']);
+        // $admin = Role::firstOrCreate(['name' => 'admin', 'guard_name' => 'sanctum']);
 
-        $admin->givePermissionTo([
-            'create tasks',
-            'edit tasks',
-            'delete tasks',
-            'view tasks'
-        ]);
 
-        $user->givePermissionTo('view tasks');
+        $user = Role::firstOrCreate(['name' => 'user', 'guard_name' => 'sanctum']);
+
+
+        // $superAdmin->givePermissionTo([
+        //     'create users',
+        //     'edit users',
+        //     'delete users',
+        //     'view users'
+        // ]);
+
+        // $admin->givePermissionTo('view users');
     }
 }
