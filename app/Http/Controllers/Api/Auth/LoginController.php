@@ -28,7 +28,11 @@ class LoginController extends Controller
         $user = User::where('email', $validated['email'])->first();
 
         if (!$user || !Hash::check($validated['password'], $user->password)) {
-            return $this->error('Invalid credentials', 401, 401);
+            return $this->error('Invalid credentials', null, 401);
+        }
+
+        if (!$user->status) {
+            return $this->error('Your account has been suspended.', null, 403);
         }
 
         $token = $user->createToken($user->name);
