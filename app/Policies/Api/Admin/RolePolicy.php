@@ -10,40 +10,38 @@ class RolePolicy
     /**
      * Determine whether the user can view any roles.
      */
-    public function viewAny(User $user): bool
+    public function viewAny(User $authUser): bool
     {
-        return $user->hasPermissionTo('view roles');
+        return $authUser->hasPermissionTo('view roles');
     }
 
     /**
      * Determine whether the user can view a specific role.
      */
-    public function view(User $user, Role $role): bool
+    public function view(User $authUser, Role $role): bool
     {
-        return $user->hasPermissionTo('view roles');
+        return $authUser->hasPermissionTo('view roles');
     }
 
     /**
      * Determine whether the user can create roles.
      */
-    public function create(User $user): bool
+    public function create(User $authUser): bool
     {
-        return $user->hasPermissionTo('create roles');
+        return $authUser->hasPermissionTo('create roles');
     }
 
     /**
      * Determine whether the user can update a role.
+     * System roles (user, admin, super_admin) are immutable.
      */
-    public function update(User $user, Role $role): bool
+    public function update(User $authUser, Role $role): bool
     {
-        return $user->hasPermissionTo('update roles');
+        return $authUser->hasPermissionTo('update roles');
     }
 
-    /**
-     * Determine whether the user can delete a role.
-     */
-    public function delete(User $user, Role $role): bool
+    public function delete(User $authUser, Role $role): bool
     {
-        return $user->hasPermissionTo('delete roles');
+        return $authUser->hasPermissionTo('delete roles');
     }
 }

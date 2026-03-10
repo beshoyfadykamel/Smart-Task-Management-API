@@ -20,7 +20,7 @@ Route::prefix('auth')->group(function () {
     });
 
 
-    Route::middleware('auth:sanctum')->group(function () {
+    Route::middleware(['auth:sanctum', 'active'])->group(function () {
 
         Route::post('/logout', [LogoutController::class, 'logout'])->name('logout');
         Route::post('/logout-all', [LogoutController::class, 'logoutAll'])->name('logout.all');

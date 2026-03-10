@@ -13,7 +13,7 @@ use App\Http\Requests\Api\Admin\Users\UsersUpdateRequest;
 use App\Http\Resources\Admin\UsersResource;
 use App\Models\User;
 use App\Traits\Api\ApiResponse;
-use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\DB;
 
 class UserController extends Controller
 {
@@ -27,12 +27,8 @@ class UserController extends Controller
         $this->authorize('viewAny', User::class);
 
         $users = User::query()
-            ->status($request->input('status'))
-            ->createdFrom($request->input('created_from'))
-            ->emailVerified($request->input('email_verified'))
-            ->search($request->input('search'))
-            ->sortByCreated($request->input('sort'))
-            ->with('roles:id,name,guard_name')
+            ->filter($request)
+            ->with(['roles:id,name'])
             ->paginate($request->input('per_page', 10))
             ->appends($request->query());
 
@@ -59,9 +55,18 @@ class UserController extends Controller
     public function store(StoreUserRequest $request)
     {
         $this->authorize('create', User::class);
-        $user = User::create($request->safe()->only(['name', 'email', 'password']));
 
-        $user->syncRoles($request->validated('role'));
+        $roleName = $request->validated('role', 'user');
+
+        if ($roleName === 'super_admin') {
+            $this->authorize('assignSuperAdmin', new User());
+        }
+
+        $user = DB::transaction(function () use ($request, $roleName) {
+            $user = User::create($request->safe()->only(['name', 'email', 'password']));
+            $user->syncRoles($roleName);
+            return $user;
+        });
 
         $user->sendEmailVerificationNotification();
 
@@ -73,14 +78,21 @@ class UserController extends Controller
      */
     public function update(UsersUpdateRequest $request, User $user)
     {
+        $this->authorize('notSuperAdmin', $user);
         $this->authorize('update', $user);
         $validated = $request->validated();
 
-        if (!empty($validated['email']) && $validated['email'] !== $user->email) {
+        $emailChanged = isset($validated['email']) && $validated['email'] !== $user->email;
+
+        if ($emailChanged) {
             $user->email_verified_at = null;
         }
 
         $user->update($validated);
+
+        if ($emailChanged) {
+            $user->sendEmailVerificationNotification();
+        }
 
         return $this->success(new UsersResource($user->loadRolesAndPermissions()), 'User updated successfully');
     }
@@ -90,12 +102,9 @@ class UserController extends Controller
      */
     public function changeRole(ChangeRoleRequest $request, User $user)
     {
-        if ($response = $this->denyIfSelf($user, 'You cannot change your own role.')) {
-            return $response;
-        }
-
+        $this->authorize('notSelf', $user);
+        $this->authorize('notSuperAdmin', $user);
         $this->authorize('changeRole', $user);
-
         if ($request->validated('role') === 'super_admin') {
             $this->authorize('assignSuperAdmin', $user);
         }
@@ -110,10 +119,8 @@ class UserController extends Controller
      */
     public function givePermissions(GivePermissionsRequest $request, User $user)
     {
-        if ($response = $this->denyIfSelf($user, 'You cannot give permissions to your own account.')) {
-            return $response;
-        }
-
+        $this->authorize('notSelf', $user);
+        $this->authorize('notSuperAdmin', $user);
         $this->authorize('givePermission', $user);
         $user->givePermissionTo($request->validated('permissions'));
 
@@ -125,14 +132,10 @@ class UserController extends Controller
      */
     public function revokePermissions(RevokePermissionsRequest $request, User $user)
     {
-        if ($response = $this->denyIfSelf($user, 'You cannot revoke permissions from your own account.')) {
-            return $response;
-        }
-
+        $this->authorize('notSelf', $user);
+        $this->authorize('notSuperAdmin', $user);
         $this->authorize('revokePermission', $user);
-        foreach ($request->validated('permissions') as $permission) {
-            $user->revokePermissionTo($permission);
-        }
+        $user->revokePermissionTo($request->validated('permissions'));
 
         return $this->success(new UsersResource($user->loadRolesAndPermissions()), 'Permissions revoked successfully');
     }
@@ -142,10 +145,8 @@ class UserController extends Controller
      */
     public function destroy(User $user)
     {
-        if ($response = $this->denyIfSelf($user, 'You cannot delete your own account.')) {
-            return $response;
-        }
-
+        $this->authorize('notSelf', $user);
+        $this->authorize('notSuperAdmin', $user);
         $this->authorize('delete', $user);
         $user->delete();
 
@@ -159,12 +160,8 @@ class UserController extends Controller
     {
         $this->authorize('viewTrashed', User::class);
         $users = User::onlyTrashed()
-            ->status($request->input('status'))
-            ->createdFrom($request->input('created_from'))
-            ->emailVerified($request->input('email_verified'))
-            ->search($request->input('search'))
-            ->sortByCreated($request->input('sort'))
-            ->with('roles:id,name,guard_name')
+            ->filter($request)
+            ->with(['roles:id,name'])
             ->paginate($request->input('per_page', 10))
             ->appends($request->query());
 
@@ -181,10 +178,8 @@ class UserController extends Controller
      */
     public function restore(User $user)
     {
-        if ($response = $this->denyIfSelf($user, 'You cannot restore your own account.')) {
-            return $response;
-        }
-
+        $this->authorize('notSelf', $user);
+        $this->authorize('notSuperAdmin', $user);
         $this->authorize('restore', $user);
         if (!$user->trashed()) {
             return $this->error('User is not deleted', null, 400);
@@ -200,10 +195,8 @@ class UserController extends Controller
      */
     public function forceDelete(User $user)
     {
-        if ($response = $this->denyIfSelf($user, 'You cannot permanently delete your own account.')) {
-            return $response;
-        }
-
+        $this->authorize('notSelf', $user);
+        $this->authorize('notSuperAdmin', $user);
         $this->authorize('forceDelete', $user);
         if (!$user->trashed()) {
             return $this->error('User is not deleted', null, 400);
@@ -212,23 +205,5 @@ class UserController extends Controller
         $user->forceDelete();
 
         return $this->success(null, 'User permanently deleted successfully');
-    }
-
-
-
-
-    // Private Methods
-    // ───────────────────────────────────────────────────────────────────────────────
-
-
-    /**
-     * Deny action if the target user is the authenticated user (self-protection).
-     */
-    private function denyIfSelf(User $user, string $message): ?JsonResponse
-    {
-        if ($user->id === request()->user()->id) {
-            return $this->error($message, null, 403);
-        }
-        return null;
     }
 }

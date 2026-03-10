@@ -27,8 +27,11 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         // ── super_admin bypasses ALL policies ──────────────────────
+        // Guard abilities are intentionally excluded from this bypass — they
+        // must always be evaluated regardless of role.
         Gate::before(function (User $user, string $ability) {
-            if ($user->hasRole('super_admin')) {
+            $guardAbilities = ['notSelf', 'notSuperAdmin', 'assignSuperAdmin'];
+            if ($user->hasRole('super_admin') && !in_array($ability, $guardAbilities)) {
                 return true;
             }
         });

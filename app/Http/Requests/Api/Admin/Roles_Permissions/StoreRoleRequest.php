@@ -23,7 +23,7 @@ class StoreRoleRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'required|unique:roles,name',
+            'name' => ['required', 'string', 'max:255', 'unique:roles,name', Rule::notIn(['user', 'admin', 'super_admin'])],
             'permissions' => 'required|array',
             'permissions.*' => [
                 Rule::exists('permissions', 'name')->where('guard_name', 'sanctum'),

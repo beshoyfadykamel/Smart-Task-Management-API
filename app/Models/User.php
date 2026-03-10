@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Notifications\Api\Auth\ResetPasswordQueued;
 use App\Notifications\Api\Auth\VerifyEmailQueued;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -27,6 +28,15 @@ class User extends Authenticatable implements MustVerifyEmail
         'email',
         'password',
         'status',
+    ];
+
+    /**
+     * Default attribute values.
+     *
+     * @var array<string, mixed>
+     */
+    protected $attributes = [
+        'status' => true,
     ];
 
     /**
@@ -60,7 +70,7 @@ class User extends Authenticatable implements MustVerifyEmail
      */
     public function loadRolesAndPermissions()
     {
-        return $this->load(['roles:id,name,guard_name', 'permissions:id,name,guard_name']);
+        return $this->load(['roles:id,name', 'roles.permissions:id,name', 'permissions:id,name']);
     }
 
     /**
@@ -71,6 +81,17 @@ class User extends Authenticatable implements MustVerifyEmail
     public function sendEmailVerificationNotification()
     {
         $this->notify(new VerifyEmailQueued());
+    }
+
+    /**
+     * Send queued password reset notification.
+     *
+     * @param string $token
+     * @return void
+     */
+    public function sendPasswordResetNotification($token)
+    {
+        $this->notify(new ResetPasswordQueued($token));
     }
 
     /**
@@ -144,5 +165,15 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         $direction = in_array($sort, ['asc', 'desc']) ? $sort : 'desc';
         return $query->orderBy('created_at', $direction);
+    }
+
+    public function scopeFilter($query, $request)
+    {
+        return $query
+            ->status($request->input('status'))
+            ->createdFrom($request->input('created_from'))
+            ->emailVerified($request->input('email_verified'))
+            ->search($request->input('search'))
+            ->sortByCreated($request->input('sort'));
     }
 }

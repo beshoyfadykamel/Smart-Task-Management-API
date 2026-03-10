@@ -27,7 +27,7 @@ class UsersResource extends JsonResource
                 $role = $this->roles->first();
                 return $role ? $role->name : null;
             }),
-            'permissions' => $this->whenLoaded('roles', function () {
+            'permissions' => $this->whenLoaded('permissions', function () {
                 return $this->getAllPermissions()->pluck('name')->values();
             }),
             'created_at' => $this->created_at,

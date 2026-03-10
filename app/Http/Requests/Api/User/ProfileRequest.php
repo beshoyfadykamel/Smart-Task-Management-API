@@ -23,9 +23,18 @@ class ProfileRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'sometimes|string|max:255',
-            'email' => ['sometimes', 'string', 'email', 'max:255', Rule::unique('users', 'email')->ignore($this->user()->id)],
-            'password' => 'sometimes|string|min:8|confirmed',
+            'current_password' => ['required', 'current_password'],
+            'name'             => 'sometimes|string|max:255',
+            'email'            => ['sometimes', 'string', 'email', 'max:255', Rule::unique('users', 'email')->ignore($this->user()->id)],
+            'password'         => 'sometimes|string|min:8|confirmed',
+        ];
+    }
+
+    public function messages(): array
+    {
+        return [
+            'current_password.required' => 'Your current password is required.',
+            'current_password.current_password' => 'The current password you entered is incorrect.',
         ];
     }
 }

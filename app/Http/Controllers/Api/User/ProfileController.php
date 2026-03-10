@@ -7,6 +7,7 @@ use App\Http\Requests\Api\User\ProfileRequest;
 use App\Http\Resources\User\ProfileResource;
 use App\Traits\Api\ApiResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class ProfileController extends Controller
 {
@@ -36,23 +37,30 @@ class ProfileController extends Controller
         $user = $request->user();
 
         $validatedData = $request->validated();
+        unset($validatedData['current_password']);
 
-        // If email changed, reset verification
-        if (!empty($validatedData['email']) && $validatedData['email'] !== $user->email) {
-            $user->email_verified_at = null;
+        $emailChanged = !empty($validatedData['email']) && $validatedData['email'] !== $user->email;
+
+        DB::transaction(function () use ($request, $user, &$validatedData, $emailChanged) {
+            if ($emailChanged) {
+                $user->email_verified_at = null;
+            }
+
+            // If password is being updated, logout from all other devices
+            if (!empty($validatedData['password'])) {
+                $user->tokens()
+                    ->where('id', '!=', $request->user()->currentAccessToken()->id)
+                    ->delete();
+            } else {
+                unset($validatedData['password']);
+            }
+
+            $user->update($validatedData);
+        });
+
+        if ($emailChanged) {
+            $user->sendEmailVerificationNotification();
         }
-
-        // If password is being updated, logout from all other devices
-        if (!empty($validatedData['password'])) {
-            // Keep current token, delete all others
-            $user->tokens()
-                ->where('id', '!=', $request->user()->currentAccessToken()->id)
-                ->delete();
-        } else {
-            unset($validatedData['password']);
-        }
-
-        $user->update($validatedData);
 
         return $this->success(new ProfileResource($user->fresh()), 'Profile updated successfully', 200);
     }

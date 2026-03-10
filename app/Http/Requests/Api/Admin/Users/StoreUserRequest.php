@@ -27,7 +27,7 @@ class StoreUserRequest extends FormRequest
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:8|confirmed',
             'role' => [
-                'required',
+                'sometimes',
                 'string',
                 Rule::exists('roles', 'name')->where('guard_name', 'sanctum'),
             ],

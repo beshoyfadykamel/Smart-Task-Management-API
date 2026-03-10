@@ -10,8 +10,8 @@ class PermissionPolicy
     /**
      * Determine whether the user can view any permissions.
      */
-    public function viewAny(User $user): bool
+    public function viewAny(User $authUser): bool
     {
-        return $user->hasPermissionTo('view permissions');
+        return $authUser->hasPermissionTo('view permissions');
     }
 }

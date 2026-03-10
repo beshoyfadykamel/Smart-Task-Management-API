@@ -7,68 +7,81 @@ use App\Models\User;
 class UserPolicy
 {
     // NOTE: super_admin bypasses all methods via Gate::before in AppServiceProvider.
-    // NOTE: Self-protection (blocking actions on own account) is handled in UserController::denyIfSelf().
+    // NOTE: Self-protection (blocking actions on own account) is enforced via the notSelf policy method.
 
-    public function viewAny(User $user): bool
+    public function notSelf(User $authUser, User $targetUser): bool
     {
-        return $user->hasPermissionTo('view users');
+        return $authUser->id !== $targetUser->id;
     }
 
-    public function viewTrashed(User $user): bool
+    public function notSuperAdmin(User $authUser, User $targetUser): bool
     {
-        return $user->hasPermissionTo('view trashed users');
+        // Users may always act on their own account (e.g. super_admin updating themselves).
+        // For any other target, deny if the target holds the super_admin role.
+        if ($authUser->id === $targetUser->id) {
+            return true;
+        }
+
+        return !$targetUser->hasRole('super_admin');
     }
 
-    public function view(User $user, User $model): bool
+    public function viewAny(User $authUser): bool
     {
-        return $user->hasPermissionTo('view users');
+        return $authUser->hasPermissionTo('view users');
     }
 
-    public function create(User $user): bool
+    public function viewTrashed(User $authUser): bool
     {
-        return $user->hasPermissionTo('create users');
+        return $authUser->hasPermissionTo('view trashed users');
     }
 
-    public function update(User $user, User $model): bool
+    public function view(User $authUser, User $targetUser): bool
     {
-        return $user->hasPermissionTo('update users');
+        return $authUser->hasPermissionTo('view users');
     }
 
-    public function delete(User $user, User $model): bool
+    public function create(User $authUser): bool
     {
-        return $user->hasPermissionTo('delete users');
+        return $authUser->hasPermissionTo('create users');
     }
 
-    public function restore(User $user, User $model): bool
+    public function update(User $authUser, User $targetUser): bool
     {
-        return $user->hasPermissionTo('restore users');
+        return $authUser->hasPermissionTo('update users');
     }
 
-    public function forceDelete(User $user, User $model): bool
+    public function delete(User $authUser, User $targetUser): bool
     {
-        return $user->hasPermissionTo('force delete users');
+        return $authUser->hasPermissionTo('delete users');
     }
 
-    public function changeRole(User $user, User $model): bool
+    public function restore(User $authUser, User $targetUser): bool
     {
-        return $user->hasPermissionTo('change roles');
+        return $authUser->hasPermissionTo('restore users');
     }
 
-    public function assignSuperAdmin(User $user, User $model): bool
+    public function forceDelete(User $authUser, User $targetUser): bool
     {
-        // Only super_admin can assign super_admin role.
-        // Gate::before already returns true for super_admin,
-        // so this method is only reached by non-super_admin users → always false.
-        return false;
+        return $authUser->hasPermissionTo('force delete users');
     }
 
-    public function givePermission(User $user, User $model): bool
+    public function changeRole(User $authUser, User $targetUser): bool
     {
-        return $user->hasPermissionTo('give permissions');
+        return $authUser->hasPermissionTo('change roles');
     }
 
-    public function revokePermission(User $user, User $model): bool
+    public function assignSuperAdmin(User $authUser, User $targetUser): bool
     {
-        return $user->hasPermissionTo('revoke permissions');
+        return $authUser->hasRole('super_admin');
+    }
+
+    public function givePermission(User $authUser, User $targetUser): bool
+    {
+        return $authUser->hasPermissionTo('give permissions');
+    }
+
+    public function revokePermission(User $authUser, User $targetUser): bool
+    {
+        return $authUser->hasPermissionTo('revoke permissions');
     }
 }

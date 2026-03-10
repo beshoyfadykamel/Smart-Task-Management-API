@@ -7,6 +7,8 @@ use App\Http\Requests\Api\Auth\RegisterRequest;
 use App\Http\Resources\User\UserResource;
 use App\Models\User;
 use App\Traits\Api\ApiResponse;
+use Illuminate\Support\Facades\DB;
+use Spatie\Permission\Models\Role;
 
 class RegisterController extends Controller
 {
@@ -22,21 +24,29 @@ class RegisterController extends Controller
      */
     public function register(RegisterRequest $request)
     {
-        $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => $request->password,
-        ]);
+        [$user, $token] = DB::transaction(function () use ($request) {
+            $user = User::create([
+                'name'     => $request->name,
+                'email'    => $request->email,
+                'password' => $request->password,
+            ]);
 
-        $token = $user->createToken($user->name);
-        $token->accessToken->update([
-            'expires_at' => now()->addDays(30),
-        ]);
+            $user->syncRoles(
+                Role::where('name', 'user')->where('guard_name', 'sanctum')->firstOrFail()
+            );
+
+            $token = $user->createToken($user->name);
+            $token->accessToken->update([
+                'expires_at' => now()->addDays(30),
+            ]);
+
+            return [$user, $token];
+        });
 
         $user->sendEmailVerificationNotification();
 
         $data = [
-            'user' => new UserResource($user),
+            'user'  => new UserResource($user),
             'token' => $token->plainTextToken,
         ];
 
