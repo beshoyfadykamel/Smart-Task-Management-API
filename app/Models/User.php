@@ -30,6 +30,15 @@ class User extends Authenticatable implements MustVerifyEmail
     ];
 
     /**
+     * Default attribute values.
+     *
+     * @var array<string, mixed>
+     */
+    protected $attributes = [
+        'status' => true,
+    ];
+
+    /**
      * The attributes that should be hidden for serialization.
      *
      * @var list<string>
@@ -60,7 +69,7 @@ class User extends Authenticatable implements MustVerifyEmail
      */
     public function loadRolesAndPermissions()
     {
-        return $this->load(['roles:id,name,guard_name', 'permissions:id,name,guard_name']);
+        return $this->load(['roles:id,name,guard_name', 'roles.permissions', 'permissions:id,name,guard_name']);
     }
 
     /**
@@ -144,5 +153,15 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         $direction = in_array($sort, ['asc', 'desc']) ? $sort : 'desc';
         return $query->orderBy('created_at', $direction);
+    }
+
+    public function scopeFilter($query, $request)
+    {
+        return $query
+            ->status($request->input('status'))
+            ->createdFrom($request->input('created_from'))
+            ->emailVerified($request->input('email_verified'))
+            ->search($request->input('search'))
+            ->sortByCreated($request->input('sort'));
     }
 }
