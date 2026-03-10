@@ -31,7 +31,9 @@ class RegisterController extends Controller
                 'password' => $request->password,
             ]);
 
-            $user->syncRoles(Role::where('name', 'user')->where('guard_name', 'sanctum')->first());
+            $user->syncRoles(
+                Role::where('name', 'user')->where('guard_name', 'sanctum')->firstOrFail()
+            );
 
             $token = $user->createToken($user->name);
             $token->accessToken->update([
