@@ -70,7 +70,7 @@ class User extends Authenticatable implements MustVerifyEmail
      */
     public function loadRolesAndPermissions()
     {
-        return $this->load(['roles:id,name,guard_name', 'roles.permissions', 'permissions:id,name,guard_name']);
+        return $this->load(['roles:id,name', 'roles.permissions:id,name', 'permissions:id,name']);
     }
 
     /**
