@@ -28,7 +28,7 @@ class UserController extends Controller
 
         $users = User::query()
             ->filter($request)
-            ->with(['roles:id,name,guard_name'])
+            ->with(['roles:id,name'])
             ->paginate($request->input('per_page', 10))
             ->appends($request->query());
 
@@ -56,13 +56,15 @@ class UserController extends Controller
     {
         $this->authorize('create', User::class);
 
-        if ($request->validated('role') === 'super_admin') {
+        $roleName = $request->validated('role', 'user');
+
+        if ($roleName === 'super_admin') {
             $this->authorize('assignSuperAdmin', new User());
         }
 
-        $user = DB::transaction(function () use ($request) {
+        $user = DB::transaction(function () use ($request, $roleName) {
             $user = User::create($request->safe()->only(['name', 'email', 'password']));
-            $user->syncRoles($request->validated('role'));
+            $user->syncRoles($roleName);
             return $user;
         });
 
@@ -159,7 +161,7 @@ class UserController extends Controller
         $this->authorize('viewTrashed', User::class);
         $users = User::onlyTrashed()
             ->filter($request)
-            ->with(['roles:id,name,guard_name'])
+            ->with(['roles:id,name'])
             ->paginate($request->input('per_page', 10))
             ->appends($request->query());
 
