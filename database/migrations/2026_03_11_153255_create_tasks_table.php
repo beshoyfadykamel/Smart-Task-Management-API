@@ -16,8 +16,8 @@ return new class extends Migration
             $table->string('title');
             $table->string('slug')->unique();
             $table->text('description')->nullable();
-            $table->foreignId('group_id')->nullable()->constrained('groups')->cascadeOnDelete()->index();
-            $table->foreignId('created_by')->constrained('users')->cascadeOnDelete()->index();
+            $table->foreignId('group_id')->nullable()->index()->constrained('groups')->cascadeOnDelete();
+            $table->foreignId('created_by')->index()->constrained('users')->cascadeOnDelete();
             $table->string('image_path')->nullable();
             $table->boolean('active')->default(false)->index();
             $table->date('due_date')->nullable()->index();

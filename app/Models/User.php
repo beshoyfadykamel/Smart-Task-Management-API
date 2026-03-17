@@ -64,6 +64,21 @@ class User extends Authenticatable implements MustVerifyEmail
     }
 
     /**
+     * Get the groups the user belongs to.
+     */
+    public function groups()
+    {
+        return $this->belongsToMany(Group::class)->withTimestamps();
+    }
+    /**
+     * Get the tasks the user belongs to.
+     */
+    public function tasks()
+    {
+        return $this->belongsToMany(Task::class)->withTimestamps();
+    }
+
+    /**
      * Load roles and permissions with selected columns.
      *
      * @return $this
