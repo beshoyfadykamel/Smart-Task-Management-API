@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('name');
             $table->string('slug')->unique();
             $table->text('description')->nullable();
-            $table->foreignId('owner_id')->constrained('users')->cascadeOnDelete()->index();
+            $table->foreignId('owner_id')->index()->constrained('users')->cascadeOnDelete();
             $table->boolean('active')->default(false)->index();
             $table->integer('max_members')->default(100);
             $table->timestamps();

@@ -64,6 +64,39 @@ class User extends Authenticatable implements MustVerifyEmail
     }
 
     /**
+     * Get the groups the user belongs to.
+     */
+    public function groups()
+    {
+        return $this->belongsToMany(Group::class)->withTimestamps();
+    }
+    /**
+     * Get tasks assigned to the user through groups.
+     */
+    public function groupTasks()
+    {
+        return $this->belongsToMany(Task::class, 'task_user')
+            ->withPivot('status')
+            ->withTimestamps();
+    }
+
+    /**
+     * Get tasks created by the user.
+     */
+    public function ownTasks()
+    {
+        return $this->hasMany(Task::class, 'created_by');
+    }
+
+    /**
+     * Backward-compatible alias.
+     */
+    public function owenTasks()
+    {
+        return $this->ownTasks();
+    }
+
+    /**
      * Load roles and permissions with selected columns.
      *
      * @return $this

@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('group_invite_link', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('group_id')->constrained('groups')->cascadeOnDelete();
-            $table->foreignId('created_by')->constrained('users')->cascadeOnDelete();
+            $table->foreignId('group_id')->index()->constrained('groups')->cascadeOnDelete();
+            $table->foreignId('created_by')->index()->constrained('users')->cascadeOnDelete();
             $table->string('token')->unique();
             $table->integer('max_uses')->nullable();
             $table->dateTime('expires_at')->nullable();

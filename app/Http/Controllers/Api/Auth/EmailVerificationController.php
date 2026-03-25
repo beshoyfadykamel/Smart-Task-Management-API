@@ -12,6 +12,18 @@ class EmailVerificationController extends Controller
     use ApiResponse;
 
     /**
+     * Return a verification notice for unverified authenticated users.
+     */
+    public function notice(Request $request)
+    {
+        if ($request->user()?->hasVerifiedEmail()) {
+            return $this->success([], 'Email is already verified.', 200);
+        }
+
+        return $this->error('Email verification is required.', null, 403);
+    }
+
+    /**
      * Verify user's email address.
      * Route is protected by 'signed' middleware only — no auth required.
      * The hash is compared against sha1 of the user's email for integrity.

@@ -2,10 +2,14 @@
 
 namespace App\Providers;
 
+use App\Models\Group;
+use App\Models\Task;
 use App\Models\User;
 use App\Policies\Api\Admin\PermissionPolicy;
 use App\Policies\Api\Admin\RolePolicy;
 use App\Policies\Api\Admin\UserPolicy;
+use App\Policies\Api\User\GroupPolicy;
+use App\Policies\Api\User\TaskPolicy;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
 use Spatie\Permission\Models\Permission;
@@ -40,5 +44,7 @@ class AppServiceProvider extends ServiceProvider
         Gate::policy(User::class, UserPolicy::class);
         Gate::policy(Role::class, RolePolicy::class);
         Gate::policy(Permission::class, PermissionPolicy::class);
+        Gate::policy(Task::class, TaskPolicy::class);
+        Gate::policy(Group::class, GroupPolicy::class);
     }
 }
