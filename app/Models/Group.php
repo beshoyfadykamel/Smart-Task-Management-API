@@ -124,7 +124,7 @@ class Group extends Model
 
         return $query->whereHas('users', function (Builder $members) use ($userId, $role) {
             $members->where('users.id', $userId)
-                ->wherePivot('role', $role);
+                ->where('group_user.role', $role);
         });
     }
 
