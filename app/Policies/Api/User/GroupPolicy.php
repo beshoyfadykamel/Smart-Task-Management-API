@@ -44,7 +44,7 @@ class GroupPolicy
      */
     public function delete(User $authUser, Group $group): bool
     {
-        return $group->isAdmin($authUser->id);
+        return $group->isOwner($authUser->id);
     }
 
     /**
@@ -59,6 +59,14 @@ class GroupPolicy
      * Determine whether the user can manage invite links.
      */
     public function manageInvites(User $authUser, Group $group): bool
+    {
+        return $group->isAdmin($authUser->id);
+    }
+
+    /**
+     * Determine whether the user can manage members.
+     */
+    public function manageMembers(User $authUser, Group $group): bool
     {
         return $group->isAdmin($authUser->id);
     }
