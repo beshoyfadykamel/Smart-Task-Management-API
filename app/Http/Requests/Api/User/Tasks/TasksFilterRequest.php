@@ -24,6 +24,12 @@ class TasksFilterRequest extends FormRequest
         return [
             'status' => 'nullable|boolean',
             'created_from' => 'nullable|date',
+            'due_from' => 'nullable|date',
+            'due_to' => 'nullable|date|after_or_equal:due_from',
+            'group_id' => 'nullable|integer|exists:groups,id',
+            'group_slug' => 'nullable|string|exists:groups,slug',
+            'mine' => 'nullable|boolean',
+            'assigned_to_me' => 'nullable|boolean',
             'search' => 'nullable|string|max:255',
             'sort' => 'nullable|in:asc,desc',
             'per_page' => 'nullable|integer|min:1|max:100',
@@ -39,6 +45,7 @@ class TasksFilterRequest extends FormRequest
     {
         return [
             'created_from.date' => 'Invalid date format. Use Y-m-d (2026-03-08) or Y-m-d H:i:s (2026-03-08 14:30:00)',
+            'due_to.after_or_equal' => 'The due_to date must be after or equal to due_from.',
             'per_page.integer' => 'The per page must be an integer.',
             'per_page.min' => 'The per page must be at least 1.',
             'per_page.max' => 'The per page may not exceed 100.',

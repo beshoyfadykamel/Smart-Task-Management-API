@@ -3,9 +3,8 @@
 namespace App\Http\Requests\Api\User\Tasks;
 
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rule;
 
-class UpdateTaskRequest extends FormRequest
+class StoreTaskAssigneesRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -23,16 +22,9 @@ class UpdateTaskRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'title' => 'sometimes|string|max:255',
-            'description' => 'nullable|string',
-            'group_id' => [
-                'nullable',
-                'integer',
-                Rule::exists('groups', 'id')->where('active', true),
-            ],
-            'image_path' => 'nullable|string|max:2048',
-            'active' => 'sometimes|boolean',
-            'due_date' => 'nullable|date',
+            'user_ids' => 'required|array|min:1|max:100',
+            'user_ids.*' => 'required|integer|distinct|exists:users,id',
+            'status' => 'sometimes|in:pending,in_progress,completed',
         ];
     }
 }
