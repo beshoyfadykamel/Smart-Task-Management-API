@@ -16,7 +16,6 @@ use App\Traits\Api\ApiResponse;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Str;
 
 class GroupController extends Controller
 {
@@ -62,7 +61,6 @@ class GroupController extends Controller
 
             $group = Group::create([
                 ...$validated,
-                'slug' => Str::uuid()->toString(),
                 'owner_id' => $request->user()->id,
             ]);
 
