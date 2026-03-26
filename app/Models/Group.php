@@ -4,9 +4,13 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
+use Spatie\Sluggable\HasSlug;
+use Spatie\Sluggable\SlugOptions;
 
 class Group extends Model
 {
+    use HasSlug;
+
     protected $fillable = [
         'name',
         'slug',
@@ -35,6 +39,13 @@ class Group extends Model
     public function getRouteKeyName(): string
     {
         return 'slug';
+    }
+
+    public function getSlugOptions(): SlugOptions
+    {
+        return SlugOptions::create()
+            ->generateSlugsFrom('name')
+            ->saveSlugsTo('slug');
     }
 
     public function owner()
@@ -94,9 +105,9 @@ class Group extends Model
             return 'owner';
         }
 
-        $member = $this->users()->where('users.id', $userId)->first();
-
-        return $member?->pivot?->role;
+        return $this->users()
+            ->where('users.id', $userId)
+            ->value('group_user.role');
     }
 
     public function scopeForUser(Builder $query, int $userId): Builder
@@ -124,7 +135,7 @@ class Group extends Model
 
         return $query->whereHas('users', function (Builder $members) use ($userId, $role) {
             $members->where('users.id', $userId)
-                ->wherePivot('role', $role);
+                ->where('group_user.role', $role);
         });
     }
 

@@ -16,7 +16,6 @@ use App\Traits\Api\ApiResponse;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Str;
 
 class GroupController extends Controller
 {
@@ -29,18 +28,29 @@ class GroupController extends Controller
     {
         $this->authorize('viewAny', Group::class);
 
+        $userId = $request->user()->id;
+
         $groups = Group::query()
-            ->forUser($request->user()->id)
-            ->filter($request, $request->user()->id)
+            ->forUser($userId)
+            ->filter($request, $userId)
+            ->select('groups.*')
+            ->selectRaw(
+                "CASE
+                    WHEN groups.owner_id = ? THEN 'owner'
+                    ELSE (
+                        SELECT group_user.role
+                        FROM group_user
+                        WHERE group_user.group_id = groups.id
+                        AND group_user.user_id = ?
+                        LIMIT 1
+                    )
+                END as current_user_role",
+                [$userId, $userId]
+            )
             ->with('owner:id,name')
             ->withCount(['tasks', 'users'])
             ->paginate($request->input('per_page', 10))
             ->appends($request->query());
-
-        $groups->getCollection()->transform(function (Group $group) use ($request) {
-            $group->setAttribute('current_user_role', $group->currentUserRole($request->user()->id));
-            return $group;
-        });
 
         return $this->successPaginated(
             $groups,
@@ -62,7 +72,6 @@ class GroupController extends Controller
 
             $group = Group::create([
                 ...$validated,
-                'slug' => Str::uuid()->toString(),
                 'owner_id' => $request->user()->id,
             ]);
 
