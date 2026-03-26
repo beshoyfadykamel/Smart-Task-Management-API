@@ -105,9 +105,9 @@ class Group extends Model
             return 'owner';
         }
 
-        $member = $this->users()->where('users.id', $userId)->first();
-
-        return $member?->pivot?->role;
+        return $this->users()
+            ->where('users.id', $userId)
+            ->value('group_user.role');
     }
 
     public function scopeForUser(Builder $query, int $userId): Builder
