@@ -19,6 +19,11 @@ Route::middleware(['auth:sanctum', 'verified', 'active'])->group(function () {
         Route::get('/{task}', 'show');
         Route::put('/{task}', 'update');
         Route::delete('/{task}', 'destroy');
+
+        Route::get('/{task}/assignees', 'assignees');
+        Route::post('/{task}/assignees', 'assignAssignees');
+        Route::put('/{task}/assignees/{user}', 'updateAssigneeStatus');
+        Route::delete('/{task}/assignees/{user}', 'unassignAssignee');
     });
 
     Route::prefix('groups')->middleware('throttle:60,1')->controller(GroupController::class)->group(function () {
@@ -27,6 +32,12 @@ Route::middleware(['auth:sanctum', 'verified', 'active'])->group(function () {
         Route::get('/{group}', 'show');
         Route::put('/{group}', 'update');
         Route::delete('/{group}', 'destroy');
+
+        Route::get('/{group}/members', 'members');
+        Route::post('/{group}/members', 'addMember');
+        Route::put('/{group}/members/{user}', 'updateMemberRole');
+        Route::delete('/{group}/members/{user}', 'removeMember');
+        Route::post('/{group}/leave', 'leave');
     });
 
     Route::prefix('groups/{group}/invite-links')->middleware('throttle:60,1')->controller(GroupInviteLinkController::class)->group(function () {
