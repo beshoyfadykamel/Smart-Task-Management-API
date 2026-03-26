@@ -19,6 +19,13 @@ class TasksResource extends JsonResource
             'title' => $this->title,
             'description' => $this->description,
             'active' => $this->active,
+            'created_by' => $this->created_by,
+            'creator' => $this->whenLoaded('creator', function () {
+                return [
+                    'id' => $this->creator->id,
+                    'name' => $this->creator->name,
+                ];
+            }),
             'group_id' => $this->whenNotNull($this->group_id),
             'group' => $this->whenLoaded('group', function () {
                 return [
@@ -26,6 +33,7 @@ class TasksResource extends JsonResource
                     'name' => $this->group->name,
                 ];
             }),
+            'assignees_count' => $this->whenCounted('users'),
             'image_path' => $this->image_path,
             'due_date' => $this->due_date,
             'created_at' => $this->created_at,

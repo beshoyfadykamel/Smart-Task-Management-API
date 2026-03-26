@@ -24,6 +24,8 @@ class GroupsFilterRequest extends FormRequest
         return [
             'status' => 'nullable|boolean',
             'created_from' => 'nullable|date',
+            'owner_only' => 'nullable|boolean',
+            'role' => 'nullable|in:owner,admin,member',
             'search' => 'nullable|string|max:255',
             'sort' => 'nullable|in:asc,desc',
             'per_page' => 'nullable|integer|min:1|max:100',

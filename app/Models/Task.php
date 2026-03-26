@@ -82,6 +82,44 @@ class Task extends Model
         });
     }
 
+    public function scopeDueFrom($query, $date)
+    {
+        return $query->when(!empty($date), function ($q) use ($date) {
+            return $q->whereDate('due_date', '>=', $date);
+        });
+    }
+
+    public function scopeDueTo($query, $date)
+    {
+        return $query->when(!empty($date), function ($q) use ($date) {
+            return $q->whereDate('due_date', '<=', $date);
+        });
+    }
+
+    public function scopeGroupId($query, $groupId)
+    {
+        return $query->when(!empty($groupId), fn($q) => $q->where('group_id', $groupId));
+    }
+
+    public function scopeGroupSlug($query, $groupSlug)
+    {
+        return $query->when(!empty($groupSlug), function ($q) use ($groupSlug) {
+            return $q->whereHas('group', fn(Builder $groupQuery) => $groupQuery->where('slug', $groupSlug));
+        });
+    }
+
+    public function scopeCreatedByUser($query, int $userId, $mine)
+    {
+        return $query->when($mine, fn($q) => $q->where('created_by', $userId));
+    }
+
+    public function scopeAssignedToUser($query, int $userId, $assignedToMe)
+    {
+        return $query->when($assignedToMe, function ($q) use ($userId) {
+            return $q->whereHas('users', fn(Builder $usersQuery) => $usersQuery->where('users.id', $userId));
+        });
+    }
+
     public function scopeSearch($query, $term)
     {
         return $query->when(!empty($term), function ($q) use ($term) {
@@ -99,11 +137,17 @@ class Task extends Model
         return $query->orderBy('created_at', $direction);
     }
 
-    public function scopeFilter($query, $request)
+    public function scopeFilter($query, $request, int $userId)
     {
         return $query
             ->status($request->input('status'))
             ->createdFrom($request->input('created_from'))
+            ->dueFrom($request->input('due_from'))
+            ->dueTo($request->input('due_to'))
+            ->groupId($request->input('group_id'))
+            ->groupSlug($request->input('group_slug'))
+            ->createdByUser($userId, $request->boolean('mine'))
+            ->assignedToUser($userId, $request->boolean('assigned_to_me'))
             ->search($request->input('search'))
             ->sortByCreated($request->input('sort'));
     }

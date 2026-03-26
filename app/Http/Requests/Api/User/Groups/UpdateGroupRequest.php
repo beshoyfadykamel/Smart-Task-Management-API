@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Api\User\Groups;
 
+use App\Models\Group;
 use Illuminate\Foundation\Http\FormRequest;
 
 class UpdateGroupRequest extends FormRequest
@@ -21,11 +22,30 @@ class UpdateGroupRequest extends FormRequest
      */
     public function rules(): array
     {
+        /** @var Group|null $group */
+        $group = $this->route('group');
+
         return [
             'name' => 'sometimes|string|max:255',
             'description' => 'nullable|string',
             'active' => 'sometimes|boolean',
-            'max_members' => 'sometimes|integer|min:1|max:10000',
+            'max_members' => [
+                'sometimes',
+                'integer',
+                'min:1',
+                'max:10000',
+                function (string $attribute, mixed $value, \Closure $fail) use ($group) {
+                    if (!$group) {
+                        return;
+                    }
+
+                    $currentMembersCount = $group->users()->count();
+
+                    if ((int) $value < $currentMembersCount) {
+                        $fail("The {$attribute} must be at least {$currentMembersCount} to fit current members.");
+                    }
+                },
+            ],
         ];
     }
 }

@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::prefix('auth')->group(function () {
 
-    Route::middleware('guest:sanctum', 'throttle:5,1')->group(function () {
+    Route::middleware(['guest:sanctum', 'throttle:5,1'])->group(function () {
         Route::post('/register', [RegisterController::class, 'register'])->name('register');
         Route::post('/login', [LoginController::class, 'login'])->name('login');
         Route::post('/forgot-password', [ForgotPasswordController::class, 'forgotPassword'])

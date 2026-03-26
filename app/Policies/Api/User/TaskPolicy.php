@@ -20,15 +20,11 @@ class TaskPolicy
      */
     public function view(User $authUser, Task $task): bool
     {
-        if ($task->created_by === $authUser->id) {
-            return true;
-        }
-
         if (!$task->group) {
-            return false;
+            return $task->created_by === $authUser->id;
         }
 
-        return $task->group->isMember($authUser->id);
+        return $task->group->isMember($authUser->id) || $task->created_by === $authUser->id;
     }
 
     /**
@@ -44,15 +40,15 @@ class TaskPolicy
      */
     public function update(User $authUser, Task $task): bool
     {
-        if ($task->created_by === $authUser->id) {
+        if (!$task->group) {
+            return $task->created_by === $authUser->id;
+        }
+
+        if ($task->group->isAdmin($authUser->id)) {
             return true;
         }
 
-        if (!$task->group) {
-            return false;
-        }
-
-        return $task->group->isAdmin($authUser->id);
+        return $task->created_by === $authUser->id && $task->group->isMember($authUser->id);
     }
 
     /**
@@ -60,14 +56,14 @@ class TaskPolicy
      */
     public function delete(User $authUser, Task $task): bool
     {
-        if ($task->created_by === $authUser->id) {
+        if (!$task->group) {
+            return $task->created_by === $authUser->id;
+        }
+
+        if ($task->group->isAdmin($authUser->id)) {
             return true;
         }
 
-        if (!$task->group) {
-            return false;
-        }
-
-        return $task->group->isAdmin($authUser->id);
+        return $task->created_by === $authUser->id && $task->group->isMember($authUser->id);
     }
 }

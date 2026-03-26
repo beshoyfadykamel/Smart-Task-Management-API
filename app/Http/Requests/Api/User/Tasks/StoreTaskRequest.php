@@ -28,7 +28,7 @@ class StoreTaskRequest extends FormRequest
             'group_id' => [
                 'nullable',
                 'integer',
-                Rule::exists('groups', 'id'),
+                Rule::exists('groups', 'id')->where('active', true),
             ],
             'image_path' => 'nullable|string|max:2048',
             'active' => 'sometimes|boolean',

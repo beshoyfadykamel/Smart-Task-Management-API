@@ -107,6 +107,27 @@ class Group extends Model
         });
     }
 
+    public function scopeOwnerOnly(Builder $query, int $userId, bool $ownerOnly): Builder
+    {
+        return $query->when($ownerOnly, fn(Builder $q) => $q->where('owner_id', $userId));
+    }
+
+    public function scopeRoleForUser(Builder $query, int $userId, ?string $role): Builder
+    {
+        if (empty($role)) {
+            return $query;
+        }
+
+        if ($role === 'owner') {
+            return $query->where('owner_id', $userId);
+        }
+
+        return $query->whereHas('users', function (Builder $members) use ($userId, $role) {
+            $members->where('users.id', $userId)
+                ->wherePivot('role', $role);
+        });
+    }
+
     public function scopeStatus($query, $status)
     {
         return $query->when($status !== null, fn($q) => $q->where('active', $status));
@@ -136,11 +157,13 @@ class Group extends Model
         return $query->orderBy('created_at', $direction);
     }
 
-    public function scopeFilter($query, $request)
+    public function scopeFilter($query, $request, int $userId)
     {
         return $query
             ->status($request->input('status'))
             ->createdFrom($request->input('created_from'))
+            ->ownerOnly($userId, $request->boolean('owner_only'))
+            ->roleForUser($userId, $request->input('role'))
             ->search($request->input('search'))
             ->sortByCreated($request->input('sort'));
     }

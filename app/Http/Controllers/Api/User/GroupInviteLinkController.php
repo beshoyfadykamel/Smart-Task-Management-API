@@ -99,12 +99,17 @@ class GroupInviteLinkController extends Controller
                 return ['error' => 'Group has reached maximum members limit.', 'code' => 422];
             }
 
-            $group->users()->attach($user->id, ['role' => $lockedInvite->role]);
+            $group->users()->syncWithoutDetaching([
+                $user->id => ['role' => $lockedInvite->role],
+            ]);
             $lockedInvite->increment('current_uses', 1, []);
 
             $group->setAttribute('current_user_role', $lockedInvite->role);
 
-            return ['group' => $group->fresh(), 'message' => 'Joined group successfully using invite link.'];
+            return [
+                'group' => $group->fresh()->load('owner:id,name')->loadCount(['tasks', 'users']),
+                'message' => 'Joined group successfully using invite link.',
+            ];
         });
 
         if (isset($result['error'])) {
@@ -112,6 +117,7 @@ class GroupInviteLinkController extends Controller
         }
 
         $group = $result['group'];
+        $group->loadMissing('owner:id,name')->loadCount(['tasks', 'users']);
         $group->setAttribute('current_user_role', $group->currentUserRole($user->id));
 
         return $this->success(new GroupsResource($group), $result['message']);
