@@ -266,9 +266,13 @@ class GroupController extends Controller
      */
     public function leave(Request $request, Group $group)
     {
-        $this->authorize('leave', $group);
-
         $userId = $request->user()->id;
+
+        if ($group->isOwner($userId)) {
+            return $this->error('Group owner cannot leave the group. Transfer ownership first.', null, 422);
+        }
+
+        $this->authorize('leave', $group);
 
         if (!$group->users()->where('users.id', $userId)->exists()) {
             return $this->error('You are not a member of this group.', null, 404);
