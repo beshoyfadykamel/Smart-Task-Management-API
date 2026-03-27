@@ -203,16 +203,12 @@ class GroupController extends Controller
      */
     public function updateMemberRole(UpdateGroupMemberRoleRequest $request, Group $group, User $user)
     {
-        $this->authorize('manageMembers', $group);
+        $this->authorize('updateMemberRole', [$group, $user]);
 
-        if ($group->owner_id === $user->id) {
-            return $this->error('Group owner role cannot be changed.', null, 422);
-        }
-
-        $member = $group->users()->where('users.id', $user->id)->first();
-        if (!$member) {
-            return $this->error('User is not a member of this group.', null, 404);
-        }
+        $member = $group->users()
+            ->where('users.id', $user->id)
+            ->select('users.id', 'users.name', 'users.email')
+            ->first();
 
         $currentRole = $member->pivot->role;
         $newRole = $request->validated('role');
@@ -221,12 +217,10 @@ class GroupController extends Controller
             return $this->error('Only group owner can manage admin roles.', null, 403);
         }
 
-        $group->users()->updateExistingPivot($user->id, ['role' => $newRole]);
-
-        $member = $group->users()
-            ->where('users.id', $user->id)
-            ->select('users.id', 'users.name', 'users.email')
-            ->first();
+        DB::transaction(function () use ($group, $user, $newRole, $member) {
+            $group->users()->updateExistingPivot($user->id, ['role' => $newRole]);
+            $member->pivot->role = $newRole;
+        });
 
         return $this->success(new GroupMemberResource($member), 'Member role updated successfully');
     }

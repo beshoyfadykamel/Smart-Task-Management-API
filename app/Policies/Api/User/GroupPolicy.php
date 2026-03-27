@@ -70,4 +70,27 @@ class GroupPolicy
     {
         return $group->isAdmin($authUser->id);
     }
+
+    /**
+     * Determine whether the user can update a specific member's role.
+     */
+    public function updateMemberRole(User $authUser, Group $group, User $targetUser): bool
+    {
+        // User must be admin of the group
+        if (!$group->isAdmin($authUser->id)) {
+            return false;
+        }
+
+        // Cannot change owner's role
+        if ($group->owner_id === $targetUser->id) {
+            return false;
+        }
+
+        // User must actually be a member of the group
+        if (!$group->users()->where('users.id', $targetUser->id)->exists()) {
+            return false;
+        }
+
+        return true;
+    }
 }
