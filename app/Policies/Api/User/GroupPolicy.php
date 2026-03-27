@@ -86,6 +86,11 @@ class GroupPolicy
             return false;
         }
 
+        // Owner cannot alter themselves
+        if ($group->owner_id === $authUser->id && $authUser->id === $targetUser->id) {
+            return false;
+        }
+
         return true;
     }
 
