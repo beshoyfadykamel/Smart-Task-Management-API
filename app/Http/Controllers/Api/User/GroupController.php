@@ -180,16 +180,22 @@ class GroupController extends Controller
             return $this->error('Only group owner can add members as admin.', null, 403);
         }
 
-        $group->users()->syncWithoutDetaching([
-            $user->id => ['role' => $role],
-        ]);
+        DB::transaction(function () use ($group, $user, $role) {
+            $group->users()->syncWithoutDetaching([
+                $user->id => ['role' => $role],
+            ]);
+        });
 
         $member = $group->users()
             ->where('users.id', $user->id)
             ->select('users.id', 'users.name', 'users.email')
             ->first();
 
-        return $this->success(new GroupMemberResource($member), 'Member added successfully', 201);
+        return $this->success(
+            new GroupMemberResource($member),
+            'Member added successfully',
+            201
+        );
     }
 
     /**
