@@ -33,20 +33,17 @@ class GroupController extends Controller
         $groups = Group::query()
             ->forUser($userId)
             ->filter($request, $userId)
+            ->leftJoin('group_user', function ($join) use ($userId) {
+                $join->on('group_user.group_id', '=', 'groups.id')
+                    ->where('group_user.user_id', '=', $userId);
+            })
             ->select('groups.*')
-            ->selectRaw(
-                "CASE
+            ->selectRaw("
+                CASE
                     WHEN groups.owner_id = ? THEN 'owner'
-                    ELSE (
-                        SELECT group_user.role
-                        FROM group_user
-                        WHERE group_user.group_id = groups.id
-                        AND group_user.user_id = ?
-                        LIMIT 1
-                    )
-                END as current_user_role",
-                [$userId, $userId]
-            )
+                    ELSE group_user.role
+                END as current_user_role
+                    ", [$userId])
             ->with('owner:id,name')
             ->withCount(['tasks', 'users'])
             ->paginate($request->input('per_page', 10))
