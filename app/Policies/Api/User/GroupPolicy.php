@@ -70,4 +70,35 @@ class GroupPolicy
     {
         return $group->isAdmin($authUser->id);
     }
+
+    /**
+     * Determine whether the user can alter a member's status (update role or remove).
+     */
+    public function alterMember(User $authUser, Group $group, User $targetUser): bool
+    {
+        // User must be admin of the group
+        if (!$group->isAdmin($authUser->id)) {
+            return false;
+        }
+
+        // Cannot alter owner
+        if ($group->owner_id === $targetUser->id) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Determine whether the user can leave the group.
+     */
+    public function leave(User $authUser, Group $group): bool
+    {
+        // Owner cannot leave the group
+        if ($group->owner_id === $authUser->id) {
+            return false;
+        }
+
+        return true;
+    }
 }

@@ -180,16 +180,22 @@ class GroupController extends Controller
             return $this->error('Only group owner can add members as admin.', null, 403);
         }
 
-        $group->users()->syncWithoutDetaching([
-            $user->id => ['role' => $role],
-        ]);
+        DB::transaction(function () use ($group, $user, $role) {
+            $group->users()->syncWithoutDetaching([
+                $user->id => ['role' => $role],
+            ]);
+        });
 
         $member = $group->users()
             ->where('users.id', $user->id)
             ->select('users.id', 'users.name', 'users.email')
             ->first();
 
-        return $this->success(new GroupMemberResource($member), 'Member added successfully', 201);
+        return $this->success(
+            new GroupMemberResource($member),
+            'Member added successfully',
+            201
+        );
     }
 
     /**
@@ -197,13 +203,17 @@ class GroupController extends Controller
      */
     public function updateMemberRole(UpdateGroupMemberRoleRequest $request, Group $group, User $user)
     {
-        $this->authorize('manageMembers', $group);
+        $this->authorize('alterMember', [$group, $user]);
 
-        if ($group->owner_id === $user->id) {
+        if ($group->isOwner($user->id)) {
             return $this->error('Group owner role cannot be changed.', null, 422);
         }
 
-        $member = $group->users()->where('users.id', $user->id)->first();
+        $member = $group->users()
+            ->where('users.id', $user->id)
+            ->select('users.id', 'users.name', 'users.email')
+            ->first();
+
         if (!$member) {
             return $this->error('User is not a member of this group.', null, 404);
         }
@@ -215,12 +225,10 @@ class GroupController extends Controller
             return $this->error('Only group owner can manage admin roles.', null, 403);
         }
 
-        $group->users()->updateExistingPivot($user->id, ['role' => $newRole]);
-
-        $member = $group->users()
-            ->where('users.id', $user->id)
-            ->select('users.id', 'users.name', 'users.email')
-            ->first();
+        DB::transaction(function () use ($group, $user, $newRole, $member) {
+            $group->users()->updateExistingPivot($user->id, ['role' => $newRole]);
+            $member->pivot->role = $newRole;
+        });
 
         return $this->success(new GroupMemberResource($member), 'Member role updated successfully');
     }
@@ -230,13 +238,14 @@ class GroupController extends Controller
      */
     public function removeMember(Request $request, Group $group, User $user)
     {
-        $this->authorize('manageMembers', $group);
+        $this->authorize('alterMember', [$group, $user]);
 
-        if ($group->owner_id === $user->id) {
-            return $this->error('Group owner cannot be removed from the group.', null, 422);
+        if ($group->isOwner($request->user()->id) && $group->isOwner($user->id)) {
+            return $this->error('Group owner cannot remove themselves from the group.', null, 422);
         }
 
         $member = $group->users()->where('users.id', $user->id)->first();
+
         if (!$member) {
             return $this->error('User is not a member of this group.', null, 404);
         }
@@ -245,7 +254,9 @@ class GroupController extends Controller
             return $this->error('Only group owner can remove admin members.', null, 403);
         }
 
-        $group->users()->detach($user->id);
+        DB::transaction(function () use ($group, $user) {
+            $group->users()->detach($user->id);
+        });
 
         return $this->success(null, 'Member removed successfully');
     }
@@ -255,9 +266,9 @@ class GroupController extends Controller
      */
     public function leave(Request $request, Group $group)
     {
-        $this->authorize('view', $group);
-
         $userId = $request->user()->id;
+
+        $this->authorize('leave', $group);
 
         if ($group->isOwner($userId)) {
             return $this->error('Group owner cannot leave the group. Transfer ownership first.', null, 422);
@@ -267,7 +278,9 @@ class GroupController extends Controller
             return $this->error('You are not a member of this group.', null, 404);
         }
 
-        $group->users()->detach($userId);
+        DB::transaction(function () use ($group, $userId) {
+            $group->users()->detach($userId);
+        });
 
         return $this->success(null, 'You left the group successfully');
     }
