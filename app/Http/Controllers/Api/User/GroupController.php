@@ -33,10 +33,8 @@ class GroupController extends Controller
         $groups = Group::query()
             ->forUser($userId)
             ->filter($request, $userId)
-            ->leftJoin('group_user', function ($join) use ($userId) {
-                $join->on('group_user.group_id', '=', 'groups.id')
-                    ->where('group_user.user_id', '=', $userId);
-            })
+            ->leftJoin('group_user', 'group_user.group_id', '=', 'groups.id')
+            ->where('group_user.user_id', '=', $userId)
             ->select('groups.*')
             ->selectRaw("
                 CASE
