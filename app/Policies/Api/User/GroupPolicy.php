@@ -48,22 +48,6 @@ class GroupPolicy
     }
 
     /**
-     * Determine whether the user can manage group tasks.
-     */
-    public function manageTasks(User $authUser, Group $group): bool
-    {
-        return $group->isAdmin($authUser->id);
-    }
-
-    /**
-     * Determine whether the user can manage invite links.
-     */
-    public function manageInvites(User $authUser, Group $group): bool
-    {
-        return $group->isAdmin($authUser->id);
-    }
-
-    /**
      * Determine whether the user can manage members.
      */
     public function manageMembers(User $authUser, Group $group): bool
@@ -83,11 +67,6 @@ class GroupPolicy
 
         // Cannot alter owner
         if ($group->owner_id === $targetUser->id) {
-            return false;
-        }
-
-        // Owner cannot alter themselves
-        if ($group->owner_id === $authUser->id && $authUser->id === $targetUser->id) {
             return false;
         }
 
