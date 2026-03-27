@@ -1,10 +1,1394 @@
 {
   "info": {
+    "_postman_id": "655f037d-d5bd-48d8-83a4-58ad857cbfaf",
     "name": "Smart Task Management API",
     "description": "Well-organized Postman collection for all available API endpoints in this Laravel project.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-    "_postman_id": "a5fb24f6-5f1f-4e8e-bf8d-c8042e1c8f10"
+    "_exporter_id": "52662449",
+    "_collection_link": "https://go.postman.co/collection/52662449-655f037d-d5bd-48d8-83a4-58ad857cbfaf?source=collection_link"
   },
+  "item": [
+    {
+      "name": "Auth - Public",
+      "item": [
+        {
+          "name": "Register",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Beshoy\",\n  \"email\": \"beshoyfadykamel1@gmail.com\",\n  \"password\": \"12345678\",\n  \"password_confirmation\": \"12345678\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/register",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "register"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Login",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"beshoyfadykamel1@gmail.com\",\n  \"password\": \"12345678\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/login",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "login"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Forgot Password",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"john@example.com\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/forgot-password",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "forgot-password"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Reset Password",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"token\": \"reset_token_here\",\n  \"email\": \"john@example.com\",\n  \"password\": \"newpassword123\",\n  \"password_confirmation\": \"newpassword123\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/reset-password",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "reset-password"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Verify Email (Signed URL)",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/auth/email/verify/{{verification_id}}/{{verification_hash}}?expires={{verification_expires}}&signature={{verification_signature}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "email",
+                "verify",
+                "{{verification_id}}",
+                "{{verification_hash}}"
+              ],
+              "query": [
+                {
+                  "key": "expires",
+                  "value": "{{verification_expires}}"
+                },
+                {
+                  "key": "signature",
+                  "value": "{{verification_signature}}"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Auth - Protected",
+      "item": [
+        {
+          "name": "Email Verification Notice",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/auth/email/verify",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "email",
+                "verify"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Resend Verification Email",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/auth/email/resend",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "email",
+                "resend"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Logout",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/auth/logout",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "logout"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Logout All Devices",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/auth/logout-all",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "logout-all"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Profile",
+      "item": [
+        {
+          "name": "Get Profile",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/profile",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "profile"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Profile",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"current_password\": \"password123\",\n  \"name\": \"John Updated\",\n  \"email\": \"john.updated@example.com\",\n  \"password\": \"newpassword123\",\n  \"password_confirmation\": \"newpassword123\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/profile/update",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "profile",
+                "update"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Tasks",
+      "item": [
+        {
+          "name": "List Tasks",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/tasks?status=1&mine=1&assigned_to_me=0&group_id={{group_id}}&group_slug=&search=&sort=desc&per_page=15",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "tasks"
+              ],
+              "query": [
+                {
+                  "key": "status",
+                  "value": "1"
+                },
+                {
+                  "key": "mine",
+                  "value": "1"
+                },
+                {
+                  "key": "assigned_to_me",
+                  "value": "0"
+                },
+                {
+                  "key": "group_id",
+                  "value": "{{group_id}}"
+                },
+                {
+                  "key": "group_slug",
+                  "value": ""
+                },
+                {
+                  "key": "search",
+                  "value": ""
+                },
+                {
+                  "key": "sort",
+                  "value": "desc"
+                },
+                {
+                  "key": "per_page",
+                  "value": "15"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create Task",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Prepare sprint report\",\n  \"description\": \"Summary of sprint achievements\",\n  \"group_id\": {{group_id}},\n  \"image_path\": null,\n  \"active\": true,\n  \"due_date\": \"2026-04-01\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/tasks",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "tasks"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Show Task",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/tasks/{{task_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "tasks",
+                "{{task_id}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Task",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Prepare sprint report (Updated)\",\n  \"description\": \"Updated details\",\n  \"group_id\": {{group_id}},\n  \"image_path\": null,\n  \"active\": true,\n  \"due_date\": \"2026-04-05\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/tasks/{{task_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "tasks",
+                "{{task_id}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Task",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/tasks/{{task_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "tasks",
+                "{{task_id}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "List Task Assignees",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/tasks/{{task_id}}/assignees",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "tasks",
+                "{{task_id}}",
+                "assignees"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Assign Task Assignees",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"user_ids\": [2, 3],\n  \"status\": \"pending\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/tasks/{{task_id}}/assignees",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "tasks",
+                "{{task_id}}",
+                "assignees"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Assignee Status",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"in_progress\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/tasks/{{task_id}}/assignees/{{user_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "tasks",
+                "{{task_id}}",
+                "assignees",
+                "{{user_id}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Unassign Assignee",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/tasks/{{task_id}}/assignees/{{user_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "tasks",
+                "{{task_id}}",
+                "assignees",
+                "{{user_id}}"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Groups",
+      "item": [
+        {
+          "name": "List Groups",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/groups?status=1&owner_only=0&role=admin&search=Engineering&sort=desc&per_page=12",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "groups"
+              ],
+              "query": [
+                {
+                  "key": "status",
+                  "value": "1"
+                },
+                {
+                  "key": "owner_only",
+                  "value": "0"
+                },
+                {
+                  "key": "role",
+                  "value": "admin"
+                },
+                {
+                  "key": "search",
+                  "value": "Engineering"
+                },
+                {
+                  "key": "sort",
+                  "value": "desc"
+                },
+                {
+                  "key": "per_page",
+                  "value": "12"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create Group",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Engineering Team\",\n  \"description\": \"Core engineering group\",\n  \"active\": true,\n  \"max_members\": 50\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/groups",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "groups"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Show Group",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/groups/{{group_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "groups",
+                "{{group_id}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Group",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Engineering Team Updated لاغ \",\n  \"description\": \"Updated group description\",\n  \"active\": true,\n  \"max_members\": 60\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/groups/{{group_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "groups",
+                "{{group_id}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Group",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/groups/{{group_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "groups",
+                "{{group_id}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "List Group Members",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/groups/{{group_id}}/members?status=1&created_from=&role=member&search=&sort=desc&per_page=15",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "groups",
+                "{{group_id}}",
+                "members"
+              ],
+              "query": [
+                {
+                  "key": "status",
+                  "value": "1"
+                },
+                {
+                  "key": "created_from",
+                  "value": ""
+                },
+                {
+                  "key": "role",
+                  "value": "member"
+                },
+                {
+                  "key": "search",
+                  "value": ""
+                },
+                {
+                  "key": "sort",
+                  "value": "desc"
+                },
+                {
+                  "key": "per_page",
+                  "value": "15"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Add Group Member",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"user_id\": {{user_id}},\n  \"role\": \"member\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/groups/{{group_id}}/members",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "groups",
+                "{{group_id}}",
+                "members"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Member Role",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"role\": \"admin\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/groups/{{group_id}}/members/{{user_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "groups",
+                "{{group_id}}",
+                "members",
+                "{{user_id}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Remove Group Member",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/groups/{{group_id}}/members/{{user_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "groups",
+                "{{group_id}}",
+                "members",
+                "{{user_id}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Leave Group",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/groups/{{group_id}}/leave",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "groups",
+                "{{group_id}}",
+                "leave"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Group Invite Links",
+      "item": [
+        {
+          "name": "List Group Invite Links",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/groups/{{group_id}}/invite-links",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "groups",
+                "{{group_id}}",
+                "invite-links"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create Group Invite Link",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"max_uses\": 25,\n  \"expires_at\": \"2026-12-31 23:59:59\",\n  \"role\": \"member\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/groups/{{group_id}}/invite-links",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "groups",
+                "{{group_id}}",
+                "invite-links"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Group Invite Link",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/groups/{{group_id}}/invite-links/{{invite_link_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "groups",
+                "{{group_id}}",
+                "invite-links",
+                "{{invite_link_id}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Accept Group Invite Link",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/invite-links/{{invite_link_id}}/accept",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "invite-links",
+                "{{invite_link_id}}",
+                "accept"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Admin - Users",
+      "item": [
+        {
+          "name": "List Users",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "",
+                "value": "",
+                "type": "text",
+                "disabled": true
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/admin/users?status=1&email_verified=1&search=&sort=desc&per_page=15",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "admin",
+                "users"
+              ],
+              "query": [
+                {
+                  "key": "status",
+                  "value": "1"
+                },
+                {
+                  "key": "email_verified",
+                  "value": "1"
+                },
+                {
+                  "key": "search",
+                  "value": ""
+                },
+                {
+                  "key": "sort",
+                  "value": "desc"
+                },
+                {
+                  "key": "per_page",
+                  "value": "15"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "List Trashed Users",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/admin/users/trashed",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "admin",
+                "users",
+                "trashed"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create User",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"New User\",\n  \"email\": \"new.user@example.com\",\n  \"password\": \"password123\",\n  \"password_confirmation\": \"password123\",\n  \"role\": \"user\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/admin/users",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "admin",
+                "users"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Show User",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/admin/users/{{user_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "admin",
+                "users",
+                "{{user_id}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update User",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Updated User\",\n  \"email\": \"updated.user@example.com\",\n  \"status\": true\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/admin/users/{{user_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "admin",
+                "users",
+                "{{user_id}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Soft Delete User",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/admin/users/{{user_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "admin",
+                "users",
+                "{{user_id}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Restore User",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/admin/users/{{user_id}}/restore",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "admin",
+                "users",
+                "{{user_id}}",
+                "restore"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Force Delete User",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/admin/users/{{user_id}}/force-delete",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "admin",
+                "users",
+                "{{user_id}}",
+                "force-delete"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Change User Role",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"role\": \"admin\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/admin/users/{{user_id}}/role",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "admin",
+                "users",
+                "{{user_id}}",
+                "role"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Give User Permissions",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"permissions\": [\"tasks.create\", \"tasks.update\"]\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/admin/users/{{user_id}}/permissions/give",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "admin",
+                "users",
+                "{{user_id}}",
+                "permissions",
+                "give"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Revoke User Permissions",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"permissions\": [\"tasks.update\"]\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/admin/users/{{user_id}}/permissions/revoke",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "admin",
+                "users",
+                "{{user_id}}",
+                "permissions",
+                "revoke"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Admin - Roles",
+      "item": [
+        {
+          "name": "List Roles",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/admin/roles",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "admin",
+                "roles"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create Role",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"project_manager\",\n  \"permissions\": [\"tasks.create\", \"tasks.update\", \"groups.view\"]\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/admin/roles",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "admin",
+                "roles"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Show Role",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/admin/roles/{{role_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "admin",
+                "roles",
+                "{{role_id}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Role",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"project_manager_updated\",\n  \"permissions\": [\"tasks.create\", \"tasks.update\"]\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/admin/roles/{{role_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "admin",
+                "roles",
+                "{{role_id}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Role",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/admin/roles/{{role_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "admin",
+                "roles",
+                "{{role_id}}"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Admin - Permissions",
+      "item": [
+        {
+          "name": "List Permissions",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/admin/permissions",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "admin",
+                "permissions"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
   "auth": {
     "type": "bearer",
     "bearer": [
@@ -16,530 +1400,49 @@
     ]
   },
   "variable": [
-    { "key": "base_url", "value": "http://127.0.0.1:8000" },
-    { "key": "token", "value": "" },
-    { "key": "user_id", "value": "1" },
-    { "key": "task_id", "value": "1" },
-    { "key": "group_id", "value": "1" },
-    { "key": "invite_link_id", "value": "1" },
-    { "key": "role_id", "value": "1" },
-    { "key": "verification_id", "value": "1" },
-    { "key": "verification_hash", "value": "hash_here" },
-    { "key": "verification_expires", "value": "9999999999" },
-    { "key": "verification_signature", "value": "signature_here" }
-  ],
-  "item": [
     {
-      "name": "Auth - Public",
-      "item": [
-        {
-          "name": "Register",
-          "request": {
-            "auth": { "type": "noauth" },
-            "method": "POST",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"name\": \"John Doe\",\n  \"email\": \"john@example.com\",\n  \"password\": \"password123\",\n  \"password_confirmation\": \"password123\"\n}"
-            },
-            "url": "{{base_url}}/api/auth/register"
-          }
-        },
-        {
-          "name": "Login",
-          "request": {
-            "auth": { "type": "noauth" },
-            "method": "POST",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"email\": \"john@example.com\",\n  \"password\": \"password123\"\n}"
-            },
-            "url": "{{base_url}}/api/auth/login"
-          }
-        },
-        {
-          "name": "Forgot Password",
-          "request": {
-            "auth": { "type": "noauth" },
-            "method": "POST",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"email\": \"john@example.com\"\n}"
-            },
-            "url": "{{base_url}}/api/auth/forgot-password"
-          }
-        },
-        {
-          "name": "Reset Password",
-          "request": {
-            "auth": { "type": "noauth" },
-            "method": "POST",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"token\": \"reset_token_here\",\n  \"email\": \"john@example.com\",\n  \"password\": \"newpassword123\",\n  \"password_confirmation\": \"newpassword123\"\n}"
-            },
-            "url": "{{base_url}}/api/auth/reset-password"
-          }
-        },
-        {
-          "name": "Verify Email (Signed URL)",
-          "request": {
-            "auth": { "type": "noauth" },
-            "method": "GET",
-            "url": "{{base_url}}/api/auth/email/verify/{{verification_id}}/{{verification_hash}}?expires={{verification_expires}}&signature={{verification_signature}}"
-          }
-        }
-      ]
+      "key": "base_url",
+      "value": "http://127.0.0.1:8000"
     },
     {
-      "name": "Auth - Protected",
-      "item": [
-        {
-          "name": "Email Verification Notice",
-          "request": {
-            "method": "GET",
-            "url": "{{base_url}}/api/auth/email/verify"
-          }
-        },
-        {
-          "name": "Resend Verification Email",
-          "request": {
-            "method": "POST",
-            "url": "{{base_url}}/api/auth/email/resend"
-          }
-        },
-        {
-          "name": "Logout",
-          "request": {
-            "method": "POST",
-            "url": "{{base_url}}/api/auth/logout"
-          }
-        },
-        {
-          "name": "Logout All Devices",
-          "request": {
-            "method": "POST",
-            "url": "{{base_url}}/api/auth/logout-all"
-          }
-        }
-      ]
+      "key": "token",
+      "value": ""
     },
     {
-      "name": "Profile",
-      "item": [
-        {
-          "name": "Get Profile",
-          "request": {
-            "method": "GET",
-            "url": "{{base_url}}/api/profile"
-          }
-        },
-        {
-          "name": "Update Profile",
-          "request": {
-            "method": "POST",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"current_password\": \"password123\",\n  \"name\": \"John Updated\",\n  \"email\": \"john.updated@example.com\",\n  \"password\": \"newpassword123\",\n  \"password_confirmation\": \"newpassword123\"\n}"
-            },
-            "url": "{{base_url}}/api/profile/update"
-          }
-        }
-      ]
+      "key": "user_id",
+      "value": "1"
     },
     {
-      "name": "Tasks",
-      "item": [
-        {
-          "name": "List Tasks",
-          "request": {
-            "method": "GET",
-            "url": "{{base_url}}/api/tasks?status=1&mine=1&assigned_to_me=0&group_id={{group_id}}&group_slug=&search=&sort=desc&per_page=15"
-          }
-        },
-        {
-          "name": "Create Task",
-          "request": {
-            "method": "POST",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"title\": \"Prepare sprint report\",\n  \"description\": \"Summary of sprint achievements\",\n  \"group_id\": {{group_id}},\n  \"image_path\": null,\n  \"active\": true,\n  \"due_date\": \"2026-04-01\"\n}"
-            },
-            "url": "{{base_url}}/api/tasks"
-          }
-        },
-        {
-          "name": "Show Task",
-          "request": {
-            "method": "GET",
-            "url": "{{base_url}}/api/tasks/{{task_id}}"
-          }
-        },
-        {
-          "name": "Update Task",
-          "request": {
-            "method": "PUT",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"title\": \"Prepare sprint report (Updated)\",\n  \"description\": \"Updated details\",\n  \"group_id\": {{group_id}},\n  \"image_path\": null,\n  \"active\": true,\n  \"due_date\": \"2026-04-05\"\n}"
-            },
-            "url": "{{base_url}}/api/tasks/{{task_id}}"
-          }
-        },
-        {
-          "name": "Delete Task",
-          "request": {
-            "method": "DELETE",
-            "url": "{{base_url}}/api/tasks/{{task_id}}"
-          }
-        },
-        {
-          "name": "List Task Assignees",
-          "request": {
-            "method": "GET",
-            "url": "{{base_url}}/api/tasks/{{task_id}}/assignees"
-          }
-        },
-        {
-          "name": "Assign Task Assignees",
-          "request": {
-            "method": "POST",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"user_ids\": [2, 3],\n  \"status\": \"pending\"\n}"
-            },
-            "url": "{{base_url}}/api/tasks/{{task_id}}/assignees"
-          }
-        },
-        {
-          "name": "Update Assignee Status",
-          "request": {
-            "method": "PUT",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"status\": \"in_progress\"\n}"
-            },
-            "url": "{{base_url}}/api/tasks/{{task_id}}/assignees/{{user_id}}"
-          }
-        },
-        {
-          "name": "Unassign Assignee",
-          "request": {
-            "method": "DELETE",
-            "url": "{{base_url}}/api/tasks/{{task_id}}/assignees/{{user_id}}"
-          }
-        }
-      ]
+      "key": "task_id",
+      "value": "1"
     },
     {
-      "name": "Groups",
-      "item": [
-        {
-          "name": "List Groups",
-          "request": {
-            "method": "GET",
-            "url": "{{base_url}}/api/groups?status=1&owner_only=0&role=member&search=&sort=desc&per_page=15"
-          }
-        },
-        {
-          "name": "Create Group",
-          "request": {
-            "method": "POST",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"name\": \"Engineering Team\",\n  \"description\": \"Core engineering group\",\n  \"active\": true,\n  \"max_members\": 50\n}"
-            },
-            "url": "{{base_url}}/api/groups"
-          }
-        },
-        {
-          "name": "Show Group",
-          "request": {
-            "method": "GET",
-            "url": "{{base_url}}/api/groups/{{group_id}}"
-          }
-        },
-        {
-          "name": "Update Group",
-          "request": {
-            "method": "PUT",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"name\": \"Engineering Team Updated\",\n  \"description\": \"Updated group description\",\n  \"active\": true,\n  \"max_members\": 60\n}"
-            },
-            "url": "{{base_url}}/api/groups/{{group_id}}"
-          }
-        },
-        {
-          "name": "Delete Group",
-          "request": {
-            "method": "DELETE",
-            "url": "{{base_url}}/api/groups/{{group_id}}"
-          }
-        },
-        {
-          "name": "List Group Members",
-          "request": {
-            "method": "GET",
-            "url": "{{base_url}}/api/groups/{{group_id}}/members"
-          }
-        },
-        {
-          "name": "Add Group Member",
-          "request": {
-            "method": "POST",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"user_id\": {{user_id}},\n  \"role\": \"member\"\n}"
-            },
-            "url": "{{base_url}}/api/groups/{{group_id}}/members"
-          }
-        },
-        {
-          "name": "Update Member Role",
-          "request": {
-            "method": "PUT",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"role\": \"admin\"\n}"
-            },
-            "url": "{{base_url}}/api/groups/{{group_id}}/members/{{user_id}}"
-          }
-        },
-        {
-          "name": "Remove Group Member",
-          "request": {
-            "method": "DELETE",
-            "url": "{{base_url}}/api/groups/{{group_id}}/members/{{user_id}}"
-          }
-        },
-        {
-          "name": "Leave Group",
-          "request": {
-            "method": "POST",
-            "url": "{{base_url}}/api/groups/{{group_id}}/leave"
-          }
-        }
-      ]
+      "key": "group_id",
+      "value": "1"
     },
     {
-      "name": "Group Invite Links",
-      "item": [
-        {
-          "name": "List Group Invite Links",
-          "request": {
-            "method": "GET",
-            "url": "{{base_url}}/api/groups/{{group_id}}/invite-links"
-          }
-        },
-        {
-          "name": "Create Group Invite Link",
-          "request": {
-            "method": "POST",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"max_uses\": 25,\n  \"expires_at\": \"2026-12-31 23:59:59\",\n  \"role\": \"member\"\n}"
-            },
-            "url": "{{base_url}}/api/groups/{{group_id}}/invite-links"
-          }
-        },
-        {
-          "name": "Delete Group Invite Link",
-          "request": {
-            "method": "DELETE",
-            "url": "{{base_url}}/api/groups/{{group_id}}/invite-links/{{invite_link_id}}"
-          }
-        },
-        {
-          "name": "Accept Group Invite Link",
-          "request": {
-            "method": "POST",
-            "url": "{{base_url}}/api/invite-links/{{invite_link_id}}/accept"
-          }
-        }
-      ]
+      "key": "invite_link_id",
+      "value": "1"
     },
     {
-      "name": "Admin - Users",
-      "item": [
-        {
-          "name": "List Users",
-          "request": {
-            "method": "GET",
-            "url": "{{base_url}}/api/admin/users?status=1&email_verified=1&search=&sort=desc&per_page=15"
-          }
-        },
-        {
-          "name": "List Trashed Users",
-          "request": {
-            "method": "GET",
-            "url": "{{base_url}}/api/admin/users/trashed"
-          }
-        },
-        {
-          "name": "Create User",
-          "request": {
-            "method": "POST",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"name\": \"New User\",\n  \"email\": \"new.user@example.com\",\n  \"password\": \"password123\",\n  \"password_confirmation\": \"password123\",\n  \"role\": \"user\"\n}"
-            },
-            "url": "{{base_url}}/api/admin/users"
-          }
-        },
-        {
-          "name": "Show User",
-          "request": {
-            "method": "GET",
-            "url": "{{base_url}}/api/admin/users/{{user_id}}"
-          }
-        },
-        {
-          "name": "Update User",
-          "request": {
-            "method": "PUT",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"name\": \"Updated User\",\n  \"email\": \"updated.user@example.com\",\n  \"status\": true\n}"
-            },
-            "url": "{{base_url}}/api/admin/users/{{user_id}}"
-          }
-        },
-        {
-          "name": "Soft Delete User",
-          "request": {
-            "method": "DELETE",
-            "url": "{{base_url}}/api/admin/users/{{user_id}}"
-          }
-        },
-        {
-          "name": "Restore User",
-          "request": {
-            "method": "POST",
-            "url": "{{base_url}}/api/admin/users/{{user_id}}/restore"
-          }
-        },
-        {
-          "name": "Force Delete User",
-          "request": {
-            "method": "DELETE",
-            "url": "{{base_url}}/api/admin/users/{{user_id}}/force-delete"
-          }
-        },
-        {
-          "name": "Change User Role",
-          "request": {
-            "method": "PUT",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"role\": \"admin\"\n}"
-            },
-            "url": "{{base_url}}/api/admin/users/{{user_id}}/role"
-          }
-        },
-        {
-          "name": "Give User Permissions",
-          "request": {
-            "method": "POST",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"permissions\": [\"tasks.create\", \"tasks.update\"]\n}"
-            },
-            "url": "{{base_url}}/api/admin/users/{{user_id}}/permissions/give"
-          }
-        },
-        {
-          "name": "Revoke User Permissions",
-          "request": {
-            "method": "POST",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"permissions\": [\"tasks.update\"]\n}"
-            },
-            "url": "{{base_url}}/api/admin/users/{{user_id}}/permissions/revoke"
-          }
-        }
-      ]
+      "key": "role_id",
+      "value": "1"
     },
     {
-      "name": "Admin - Roles",
-      "item": [
-        {
-          "name": "List Roles",
-          "request": {
-            "method": "GET",
-            "url": "{{base_url}}/api/admin/roles"
-          }
-        },
-        {
-          "name": "Create Role",
-          "request": {
-            "method": "POST",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"name\": \"project_manager\",\n  \"permissions\": [\"tasks.create\", \"tasks.update\", \"groups.view\"]\n}"
-            },
-            "url": "{{base_url}}/api/admin/roles"
-          }
-        },
-        {
-          "name": "Show Role",
-          "request": {
-            "method": "GET",
-            "url": "{{base_url}}/api/admin/roles/{{role_id}}"
-          }
-        },
-        {
-          "name": "Update Role",
-          "request": {
-            "method": "PUT",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"name\": \"project_manager_updated\",\n  \"permissions\": [\"tasks.create\", \"tasks.update\"]\n}"
-            },
-            "url": "{{base_url}}/api/admin/roles/{{role_id}}"
-          }
-        },
-        {
-          "name": "Delete Role",
-          "request": {
-            "method": "DELETE",
-            "url": "{{base_url}}/api/admin/roles/{{role_id}}"
-          }
-        }
-      ]
+      "key": "verification_id",
+      "value": "1"
     },
     {
-      "name": "Admin - Permissions",
-      "item": [
-        {
-          "name": "List Permissions",
-          "request": {
-            "method": "GET",
-            "url": "{{base_url}}/api/admin/permissions"
-          }
-        }
-      ]
+      "key": "verification_hash",
+      "value": "hash_here"
+    },
+    {
+      "key": "verification_expires",
+      "value": "9999999999"
+    },
+    {
+      "key": "verification_signature",
+      "value": "signature_here"
     }
   ]
 }
