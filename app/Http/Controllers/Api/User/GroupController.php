@@ -120,8 +120,9 @@ class GroupController extends Controller
     {
         $this->authorize('delete', $group);
 
-        $group->delete([]);
-
+        DB::transaction(function () use ($group) {
+            $group->delete();
+        });
         return $this->success(null, 'Group deleted successfully');
     }
 
