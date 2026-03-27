@@ -88,4 +88,17 @@ class GroupPolicy
 
         return true;
     }
+
+    /**
+     * Determine whether the user can leave the group.
+     */
+    public function leave(User $authUser, Group $group): bool
+    {
+        // Owner cannot leave the group
+        if ($group->owner_id === $authUser->id) {
+            return false;
+        }
+
+        return true;
+    }
 }
