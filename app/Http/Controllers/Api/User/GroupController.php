@@ -203,6 +203,10 @@ class GroupController extends Controller
      */
     public function updateMemberRole(UpdateGroupMemberRoleRequest $request, Group $group, User $user)
     {
+        if ($group->isOwner($user->id)) {
+            return $this->error('Group owner role cannot be changed.', null, 422);
+        }
+
         $this->authorize('alterMember', [$group, $user]);
 
         $member = $group->users()
@@ -234,6 +238,10 @@ class GroupController extends Controller
      */
     public function removeMember(Request $request, Group $group, User $user)
     {
+        if ($group->isOwner($request->user()->id) && $group->isOwner($user->id)) {
+            return $this->error('Group owner cannot remove themselves from the group.', null, 422);
+        }
+
         $this->authorize('alterMember', [$group, $user]);
 
         $member = $group->users()->where('users.id', $user->id)->first();
@@ -259,6 +267,10 @@ class GroupController extends Controller
     public function leave(Request $request, Group $group)
     {
         $userId = $request->user()->id;
+
+        if ($group->isOwner($userId)) {
+            return $this->error('Group owner cannot leave the group. Transfer ownership first.', null, 422);
+        }
 
         $this->authorize('leave', $group);
 
