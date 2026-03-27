@@ -200,6 +200,52 @@ class User extends Authenticatable implements MustVerifyEmail
         return $query->orderBy('created_at', $direction);
     }
 
+    public function scopeWithGroupMemberMeta($query, int $ownerId)
+    {
+        return $query
+            ->selectRaw('group_user.created_at as joined_at')
+            ->selectRaw('CASE WHEN users.id = ? THEN ? ELSE group_user.role END as role', [$ownerId, 'owner']);
+    }
+
+    public function scopeJoinedFrom($query, $date)
+    {
+        return $query->when(!empty($date), function ($q) use ($date) {
+            return $q->where('group_user.created_at', '>=', $date);
+        });
+    }
+
+    public function scopeRoleInGroup($query, ?string $role, int $ownerId)
+    {
+        if (empty($role)) {
+            return $query;
+        }
+
+        if ($role === 'owner') {
+            return $query->where('users.id', $ownerId);
+        }
+
+        return $query
+            ->where('users.id', '!=', $ownerId)
+            ->where('group_user.role', $role);
+    }
+
+    public function scopeSortByJoined($query, $sort)
+    {
+        $direction = in_array($sort, ['asc', 'desc']) ? $sort : 'desc';
+
+        return $query->orderBy('group_user.created_at', $direction);
+    }
+
+    public function scopeFilterGroupMembers($query, $request, int $ownerId)
+    {
+        return $query
+            ->status($request->input('status'))
+            ->joinedFrom($request->input('created_from'))
+            ->roleInGroup($request->input('role'), $ownerId)
+            ->search($request->input('search'))
+            ->sortByJoined($request->input('sort'));
+    }
+
     public function scopeFilter($query, $request)
     {
         return $query

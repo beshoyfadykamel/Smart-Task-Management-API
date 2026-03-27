@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\User;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\User\Groups\GroupsFilterRequest;
+use App\Http\Requests\Api\User\Groups\GroupMembersFilterRequest;
 use App\Http\Requests\Api\User\Groups\StoreGroupMemberRequest;
 use App\Http\Requests\Api\User\Groups\StoreGroupRequest;
 use App\Http\Requests\Api\User\Groups\UpdateGroupMemberRoleRequest;
@@ -129,12 +130,14 @@ class GroupController extends Controller
     /**
      * Display group members.
      */
-    public function members(Request $request, Group $group)
+    public function members(GroupMembersFilterRequest $request, Group $group)
     {
         $this->authorize('view', $group);
 
         $members = $group->users()
             ->select('users.id', 'users.name', 'users.email')
+            ->withGroupMemberMeta($group->owner_id)
+            ->filterGroupMembers($request, $group->owner_id)
             ->paginate($request->input('per_page', 10))
             ->appends($request->query());
 
