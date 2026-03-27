@@ -203,7 +203,7 @@ class GroupController extends Controller
      */
     public function updateMemberRole(UpdateGroupMemberRoleRequest $request, Group $group, User $user)
     {
-        $this->authorize('updateMemberRole', [$group, $user]);
+        $this->authorize('alterMember', [$group, $user]);
 
         $member = $group->users()
             ->where('users.id', $user->id)
@@ -230,7 +230,13 @@ class GroupController extends Controller
      */
     public function removeMember(Request $request, Group $group, User $user)
     {
-        $this->authorize('removeMember', [$group, $user]);
+        $this->authorize('alterMember', [$group, $user]);
+
+        $member = $group->users()->where('users.id', $user->id)->first();
+
+        if ($member->pivot->role === 'admin' && !$group->isOwner($request->user()->id)) {
+            return $this->error('Only group owner can remove admin members.', null, 403);
+        }
 
         DB::transaction(function () use ($group, $user) {
             $group->users()->detach($user->id);

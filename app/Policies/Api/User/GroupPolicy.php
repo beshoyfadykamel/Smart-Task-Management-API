@@ -72,51 +72,22 @@ class GroupPolicy
     }
 
     /**
-     * Determine whether the user can update a specific member's role.
+     * Determine whether the user can alter a member's status (update role or remove).
      */
-    public function updateMemberRole(User $authUser, Group $group, User $targetUser): bool
+    public function alterMember(User $authUser, Group $group, User $targetUser): bool
     {
         // User must be admin of the group
         if (!$group->isAdmin($authUser->id)) {
             return false;
         }
 
-        // Cannot change owner's role
+        // Cannot alter owner
         if ($group->owner_id === $targetUser->id) {
             return false;
         }
 
         // User must actually be a member of the group
         if (!$group->users()->where('users.id', $targetUser->id)->exists()) {
-            return false;
-        }
-
-        return true;
-    }
-
-    /**
-     * Determine whether the user can remove a specific member from the group.
-     */
-    public function removeMember(User $authUser, Group $group, User $targetUser): bool
-    {
-        // User must be admin of the group
-        if (!$group->isAdmin($authUser->id)) {
-            return false;
-        }
-
-        // Cannot remove owner from the group
-        if ($group->owner_id === $targetUser->id) {
-            return false;
-        }
-
-        // User must actually be a member of the group
-        $targetMember = $group->users()->where('users.id', $targetUser->id)->first();
-        if (!$targetMember) {
-            return false;
-        }
-
-        // Only group owner can remove admin members
-        if ($targetMember->pivot->role === 'admin' && !$group->isOwner($authUser->id)) {
             return false;
         }
 
