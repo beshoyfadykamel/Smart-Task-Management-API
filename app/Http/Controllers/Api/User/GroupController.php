@@ -230,22 +230,11 @@ class GroupController extends Controller
      */
     public function removeMember(Request $request, Group $group, User $user)
     {
-        $this->authorize('manageMembers', $group);
+        $this->authorize('removeMember', [$group, $user]);
 
-        if ($group->owner_id === $user->id) {
-            return $this->error('Group owner cannot be removed from the group.', null, 422);
-        }
-
-        $member = $group->users()->where('users.id', $user->id)->first();
-        if (!$member) {
-            return $this->error('User is not a member of this group.', null, 404);
-        }
-
-        if ($member->pivot->role === 'admin' && !$group->isOwner($request->user()->id)) {
-            return $this->error('Only group owner can remove admin members.', null, 403);
-        }
-
-        $group->users()->detach($user->id);
+        DB::transaction(function () use ($group, $user) {
+            $group->users()->detach($user->id);
+        });
 
         return $this->success(null, 'Member removed successfully');
     }
