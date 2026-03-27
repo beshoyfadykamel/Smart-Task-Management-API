@@ -240,7 +240,7 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $query
             ->status($request->input('status'))
-            ->joinedFrom($request->input('created_from'))
+            ->joinedFrom($request->input('joined_from'))
             ->roleInGroup($request->input('role'), $ownerId)
             ->search($request->input('search'))
             ->sortByJoined($request->input('sort'));

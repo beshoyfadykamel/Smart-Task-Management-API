@@ -23,7 +23,7 @@ class GroupMembersFilterRequest extends FormRequest
     {
         return [
             'status' => 'nullable|boolean',
-            'created_from' => 'nullable|date',
+            'joined_from' => 'nullable|date',
             'role' => 'nullable|in:owner,admin,member',
             'search' => 'nullable|string|max:255',
             'sort' => 'nullable|in:asc,desc',
@@ -39,7 +39,7 @@ class GroupMembersFilterRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'created_from.date' => 'Invalid date format. Use Y-m-d (2026-03-08) or Y-m-d H:i:s (2026-03-08 14:30:00)',
+            'joined_from.date' => 'Invalid date format. Use Y-m-d (2026-03-08) or Y-m-d H:i:s (2026-03-08 14:30:00)',
             'per_page.integer' => 'The per page must be an integer.',
             'per_page.min' => 'The per page must be at least 1.',
             'per_page.max' => 'The per page may not exceed 100.',
