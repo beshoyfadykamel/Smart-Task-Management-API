@@ -86,11 +86,6 @@ class GroupPolicy
             return false;
         }
 
-        // User must actually be a member of the group
-        if (!$group->users()->where('users.id', $targetUser->id)->exists()) {
-            return false;
-        }
-
         return true;
     }
 }

@@ -210,6 +210,10 @@ class GroupController extends Controller
             ->select('users.id', 'users.name', 'users.email')
             ->first();
 
+        if (!$member) {
+            return $this->error('User is not a member of this group.', null, 404);
+        }
+
         $currentRole = $member->pivot->role;
         $newRole = $request->validated('role');
 
@@ -233,6 +237,10 @@ class GroupController extends Controller
         $this->authorize('alterMember', [$group, $user]);
 
         $member = $group->users()->where('users.id', $user->id)->first();
+
+        if (!$member) {
+            return $this->error('User is not a member of this group.', null, 404);
+        }
 
         if ($member->pivot->role === 'admin' && !$group->isOwner($request->user()->id)) {
             return $this->error('Only group owner can remove admin members.', null, 403);
