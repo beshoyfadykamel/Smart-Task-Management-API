@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\User;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\User\Groups\GroupsFilterRequest;
+use App\Http\Requests\Api\User\Groups\GroupMembersFilterRequest;
 use App\Http\Requests\Api\User\Groups\StoreGroupMemberRequest;
 use App\Http\Requests\Api\User\Groups\StoreGroupRequest;
 use App\Http\Requests\Api\User\Groups\UpdateGroupMemberRoleRequest;
@@ -33,20 +34,15 @@ class GroupController extends Controller
         $groups = Group::query()
             ->forUser($userId)
             ->filter($request, $userId)
+            ->leftJoin('group_user', 'group_user.group_id', '=', 'groups.id')
+            ->where('group_user.user_id', '=', $userId)
             ->select('groups.*')
-            ->selectRaw(
-                "CASE
+            ->selectRaw("
+                CASE
                     WHEN groups.owner_id = ? THEN 'owner'
-                    ELSE (
-                        SELECT group_user.role
-                        FROM group_user
-                        WHERE group_user.group_id = groups.id
-                        AND group_user.user_id = ?
-                        LIMIT 1
-                    )
-                END as current_user_role",
-                [$userId, $userId]
-            )
+                    ELSE group_user.role
+                END as current_user_role
+                    ", [$userId])
             ->with('owner:id,name')
             ->withCount(['tasks', 'users'])
             ->paginate($request->input('per_page', 10))
@@ -125,20 +121,23 @@ class GroupController extends Controller
     {
         $this->authorize('delete', $group);
 
-        $group->delete([]);
-
+        DB::transaction(function () use ($group) {
+            $group->delete();
+        });
         return $this->success(null, 'Group deleted successfully');
     }
 
     /**
      * Display group members.
      */
-    public function members(Request $request, Group $group)
+    public function members(GroupMembersFilterRequest $request, Group $group)
     {
         $this->authorize('view', $group);
 
         $members = $group->users()
             ->select('users.id', 'users.name', 'users.email')
+            ->withGroupMemberMeta($group->owner_id)
+            ->filterGroupMembers($request, $group->owner_id)
             ->paginate($request->input('per_page', 10))
             ->appends($request->query());
 

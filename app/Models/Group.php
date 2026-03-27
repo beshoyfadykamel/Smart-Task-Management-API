@@ -40,12 +40,18 @@ class Group extends Model
     {
         return 'slug';
     }
-
     public function getSlugOptions(): SlugOptions
     {
         return SlugOptions::create()
-            ->generateSlugsFrom('name')
-            ->saveSlugsTo('slug');
+            ->generateSlugsFrom(function ($model) {
+                $ownerName = $model->owner?->name
+                    ?? auth()->user()?->name
+                    ?? '';
+
+                return $model->name . ' ' . $ownerName;
+            })
+            ->saveSlugsTo('slug')
+            ->doNotGenerateSlugsOnUpdate();
     }
 
     public function owner()

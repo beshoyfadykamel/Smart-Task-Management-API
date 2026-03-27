@@ -18,8 +18,8 @@ class GroupMemberResource extends JsonResource
             'id' => $this->id,
             'name' => $this->name,
             'email' => $this->email,
-            'role' => $this->pivot?->role,
-            'joined_at' => $this->pivot?->created_at,
+            'role' => $this->role ?? $this->pivot?->role,
+            'joined_at' => $this->joined_at ?? $this->pivot?->created_at,
         ];
     }
 }
