@@ -252,7 +252,7 @@
                         "method": "GET",
                         "header": [],
                         "url": {
-                            "raw": "{{base_url}}/api/tasks?status=1&mine=1&assigned_to_me=0&group_id={{group_id}}&group_slug=&search=&sort=desc&per_page=15",
+                            "raw": "{{base_url}}/api/tasks?status=1&mine=1&assigned_to_me=0&group_slug={{group_slug}}&search=&sort=desc&per_page=15",
                             "host": ["{{base_url}}"],
                             "path": ["api", "tasks"],
                             "query": [
@@ -269,12 +269,8 @@
                                     "value": "0"
                                 },
                                 {
-                                    "key": "group_id",
-                                    "value": "{{group_id}}"
-                                },
-                                {
                                     "key": "group_slug",
-                                    "value": ""
+                                    "value": "{{group_slug}}"
                                 },
                                 {
                                     "key": "search",
@@ -305,7 +301,7 @@
                         ],
                         "body": {
                             "mode": "raw",
-                            "raw": "{\n  \"title\": \"Prepare sprint report\",\n  \"description\": \"Summary of sprint achievements\",\n  \"group_id\": {{group_id}},\n  \"image_path\": null,\n  \"active\": true,\n  \"due_date\": \"2026-04-01\"\n}"
+                            "raw": "{\n  \"title\": \"Prepare sprint report\",\n  \"description\": \"Summary of sprint achievements\",\n  \"group_slug\": \"{{group_slug}}\",\n  \"image_path\": null,\n  \"active\": true,\n  \"due_date\": \"2026-04-01\"\n}"
                         },
                         "url": {
                             "raw": "{{base_url}}/api/tasks",
@@ -321,9 +317,9 @@
                         "method": "GET",
                         "header": [],
                         "url": {
-                            "raw": "{{base_url}}/api/tasks/{{task_id}}",
+                            "raw": "{{base_url}}/api/tasks/{{task_slug}}",
                             "host": ["{{base_url}}"],
-                            "path": ["api", "tasks", "{{task_id}}"]
+                            "path": ["api", "tasks", "{{task_slug}}"]
                         }
                     },
                     "response": []
@@ -340,12 +336,12 @@
                         ],
                         "body": {
                             "mode": "raw",
-                            "raw": "{\n  \"title\": \"Prepare sprint report (Updated)\",\n  \"description\": \"Updated details\",\n  \"group_id\": {{group_id}},\n  \"image_path\": null,\n  \"active\": true,\n  \"due_date\": \"2026-04-05\"\n}"
+                            "raw": "{\n  \"title\": \"Prepare sprint report (Updated)\",\n  \"description\": \"Updated details\",\n  \"group_slug\": \"{{group_slug}}\",\n  \"image_path\": null,\n  \"active\": true,\n  \"due_date\": \"2026-04-05\"\n}"
                         },
                         "url": {
-                            "raw": "{{base_url}}/api/tasks/{{task_id}}",
+                            "raw": "{{base_url}}/api/tasks/{{task_slug}}",
                             "host": ["{{base_url}}"],
-                            "path": ["api", "tasks", "{{task_id}}"]
+                            "path": ["api", "tasks", "{{task_slug}}"]
                         }
                     },
                     "response": []
@@ -356,9 +352,9 @@
                         "method": "DELETE",
                         "header": [],
                         "url": {
-                            "raw": "{{base_url}}/api/tasks/{{task_id}}",
+                            "raw": "{{base_url}}/api/tasks/{{task_slug}}",
                             "host": ["{{base_url}}"],
-                            "path": ["api", "tasks", "{{task_id}}"]
+                            "path": ["api", "tasks", "{{task_slug}}"]
                         }
                     },
                     "response": []
@@ -369,9 +365,14 @@
                         "method": "GET",
                         "header": [],
                         "url": {
-                            "raw": "{{base_url}}/api/tasks/{{task_id}}/assignees",
+                            "raw": "{{base_url}}/api/tasks/{{task_slug}}/assignees",
                             "host": ["{{base_url}}"],
-                            "path": ["api", "tasks", "{{task_id}}", "assignees"]
+                            "path": [
+                                "api",
+                                "tasks",
+                                "{{task_slug}}",
+                                "assignees"
+                            ]
                         }
                     },
                     "response": []
@@ -391,9 +392,14 @@
                             "raw": "{\n  \"user_ids\": [2, 3],\n  \"status\": \"pending\"\n}"
                         },
                         "url": {
-                            "raw": "{{base_url}}/api/tasks/{{task_id}}/assignees",
+                            "raw": "{{base_url}}/api/tasks/{{task_slug}}/assignees",
                             "host": ["{{base_url}}"],
-                            "path": ["api", "tasks", "{{task_id}}", "assignees"]
+                            "path": [
+                                "api",
+                                "tasks",
+                                "{{task_slug}}",
+                                "assignees"
+                            ]
                         }
                     },
                     "response": []
@@ -413,12 +419,12 @@
                             "raw": "{\n  \"status\": \"in_progress\"\n}"
                         },
                         "url": {
-                            "raw": "{{base_url}}/api/tasks/{{task_id}}/assignees/{{user_id}}",
+                            "raw": "{{base_url}}/api/tasks/{{task_slug}}/assignees/{{user_id}}",
                             "host": ["{{base_url}}"],
                             "path": [
                                 "api",
                                 "tasks",
-                                "{{task_id}}",
+                                "{{task_slug}}",
                                 "assignees",
                                 "{{user_id}}"
                             ]
@@ -432,12 +438,12 @@
                         "method": "DELETE",
                         "header": [],
                         "url": {
-                            "raw": "{{base_url}}/api/tasks/{{task_id}}/assignees/{{user_id}}",
+                            "raw": "{{base_url}}/api/tasks/{{task_slug}}/assignees/{{user_id}}",
                             "host": ["{{base_url}}"],
                             "path": [
                                 "api",
                                 "tasks",
-                                "{{task_id}}",
+                                "{{task_slug}}",
                                 "assignees",
                                 "{{user_id}}"
                             ]
@@ -517,9 +523,9 @@
                         "method": "GET",
                         "header": [],
                         "url": {
-                            "raw": "{{base_url}}/api/groups/{{group_id}}",
+                            "raw": "{{base_url}}/api/groups/{{group_slug}}",
                             "host": ["{{base_url}}"],
-                            "path": ["api", "groups", "{{group_id}}"]
+                            "path": ["api", "groups", "{{group_slug}}"]
                         }
                     },
                     "response": []
@@ -539,9 +545,9 @@
                             "raw": "{\n  \"name\": \"Engineering Team Updated لاغ \",\n  \"description\": \"Updated group description\",\n  \"active\": true,\n  \"max_members\": 60\n}"
                         },
                         "url": {
-                            "raw": "{{base_url}}/api/groups/{{group_id}}",
+                            "raw": "{{base_url}}/api/groups/{{group_slug}}",
                             "host": ["{{base_url}}"],
-                            "path": ["api", "groups", "{{group_id}}"]
+                            "path": ["api", "groups", "{{group_slug}}"]
                         }
                     },
                     "response": []
@@ -552,9 +558,9 @@
                         "method": "DELETE",
                         "header": [],
                         "url": {
-                            "raw": "{{base_url}}/api/groups/{{group_id}}",
+                            "raw": "{{base_url}}/api/groups/{{group_slug}}",
                             "host": ["{{base_url}}"],
-                            "path": ["api", "groups", "{{group_id}}"]
+                            "path": ["api", "groups", "{{group_slug}}"]
                         }
                     },
                     "response": []
@@ -565,12 +571,12 @@
                         "method": "GET",
                         "header": [],
                         "url": {
-                            "raw": "{{base_url}}/api/groups/{{group_id}}/members?status=1&joined_from=&role=member&search=&sort=desc&per_page=15",
+                            "raw": "{{base_url}}/api/groups/{{group_slug}}/members?status=1&joined_from=&role=member&search=&sort=desc&per_page=15",
                             "host": ["{{base_url}}"],
                             "path": [
                                 "api",
                                 "groups",
-                                "{{group_id}}",
+                                "{{group_slug}}",
                                 "members"
                             ],
                             "query": [
@@ -618,9 +624,14 @@
                             "raw": "{\n  \"user_id\": {{user_id}},\n  \"role\": \"member\"\n}"
                         },
                         "url": {
-                            "raw": "{{base_url}}/api/groups/{{group_id}}/members",
+                            "raw": "{{base_url}}/api/groups/{{group_slug}}/members",
                             "host": ["{{base_url}}"],
-                            "path": ["api", "groups", "{{group_id}}", "members"]
+                            "path": [
+                                "api",
+                                "groups",
+                                "{{group_slug}}",
+                                "members"
+                            ]
                         }
                     },
                     "response": []
@@ -640,12 +651,12 @@
                             "raw": "{\n  \"role\": \"admin\"\n}"
                         },
                         "url": {
-                            "raw": "{{base_url}}/api/groups/{{group_id}}/members/{{user_id}}",
+                            "raw": "{{base_url}}/api/groups/{{group_slug}}/members/{{user_id}}",
                             "host": ["{{base_url}}"],
                             "path": [
                                 "api",
                                 "groups",
-                                "{{group_id}}",
+                                "{{group_slug}}",
                                 "members",
                                 "{{user_id}}"
                             ]
@@ -659,12 +670,12 @@
                         "method": "DELETE",
                         "header": [],
                         "url": {
-                            "raw": "{{base_url}}/api/groups/{{group_id}}/members/{{user_id}}",
+                            "raw": "{{base_url}}/api/groups/{{group_slug}}/members/{{user_id}}",
                             "host": ["{{base_url}}"],
                             "path": [
                                 "api",
                                 "groups",
-                                "{{group_id}}",
+                                "{{group_slug}}",
                                 "members",
                                 "{{user_id}}"
                             ]
@@ -678,9 +689,9 @@
                         "method": "POST",
                         "header": [],
                         "url": {
-                            "raw": "{{base_url}}/api/groups/{{group_id}}/leave",
+                            "raw": "{{base_url}}/api/groups/{{group_slug}}/leave",
                             "host": ["{{base_url}}"],
-                            "path": ["api", "groups", "{{group_id}}", "leave"]
+                            "path": ["api", "groups", "{{group_slug}}", "leave"]
                         }
                     },
                     "response": []
@@ -696,12 +707,12 @@
                         "method": "GET",
                         "header": [],
                         "url": {
-                            "raw": "{{base_url}}/api/groups/{{group_id}}/invite-links",
+                            "raw": "{{base_url}}/api/groups/{{group_slug}}/invite-links",
                             "host": ["{{base_url}}"],
                             "path": [
                                 "api",
                                 "groups",
-                                "{{group_id}}",
+                                "{{group_slug}}",
                                 "invite-links"
                             ]
                         }
@@ -723,12 +734,12 @@
                             "raw": "{\n  \"max_uses\": 25,\n  \"expires_at\": \"2026-12-31 23:59:59\",\n  \"role\": \"member\"\n}"
                         },
                         "url": {
-                            "raw": "{{base_url}}/api/groups/{{group_id}}/invite-links",
+                            "raw": "{{base_url}}/api/groups/{{group_slug}}/invite-links",
                             "host": ["{{base_url}}"],
                             "path": [
                                 "api",
                                 "groups",
-                                "{{group_id}}",
+                                "{{group_slug}}",
                                 "invite-links"
                             ]
                         }
@@ -741,12 +752,12 @@
                         "method": "DELETE",
                         "header": [],
                         "url": {
-                            "raw": "{{base_url}}/api/groups/{{group_id}}/invite-links/{{invite_link_id}}",
+                            "raw": "{{base_url}}/api/groups/{{group_slug}}/invite-links/{{invite_link_id}}",
                             "host": ["{{base_url}}"],
                             "path": [
                                 "api",
                                 "groups",
-                                "{{group_id}}",
+                                "{{group_slug}}",
                                 "invite-links",
                                 "{{invite_link_id}}"
                             ]
@@ -1159,12 +1170,12 @@
             "value": "1"
         },
         {
-            "key": "task_id",
-            "value": "1"
+            "key": "task_slug",
+            "value": "task-sample-slug"
         },
         {
-            "key": "group_id",
-            "value": "1"
+            "key": "group_slug",
+            "value": "group-sample-slug"
         },
         {
             "key": "invite_link_id",

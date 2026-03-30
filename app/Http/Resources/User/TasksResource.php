@@ -26,7 +26,6 @@ class TasksResource extends JsonResource
                     'name' => $this->creator->name,
                 ];
             }),
-            'group_id' => $this->whenNotNull($this->group_id),
             'group' => $this->whenLoaded('group', function () {
                 return [
                     'slug' => $this->group->slug,

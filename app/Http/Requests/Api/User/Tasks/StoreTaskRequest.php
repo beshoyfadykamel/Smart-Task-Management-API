@@ -25,10 +25,10 @@ class StoreTaskRequest extends FormRequest
         return [
             'title' => 'required|string|max:255',
             'description' => 'nullable|string',
-            'group_id' => [
+            'group_slug' => [
                 'nullable',
-                'integer',
-                Rule::exists('groups', 'id')->where('active', true),
+                'string',
+                Rule::exists('groups', 'slug')->where('active', true),
             ],
             'image_path' => 'nullable|string|max:2048',
             'active' => 'sometimes|boolean',

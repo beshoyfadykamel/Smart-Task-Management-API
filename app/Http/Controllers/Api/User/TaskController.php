@@ -15,13 +15,14 @@ use App\Models\Task;
 use App\Models\User;
 use App\Traits\Api\ApiResponse;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Str;
 
 class TaskController extends Controller
 {
     use ApiResponse, AuthorizesRequests;
+
     /**
      * Display a listing of the resource.
      */
@@ -54,18 +55,14 @@ class TaskController extends Controller
         $this->authorize('create', Task::class);
 
         $validated = $request->validated();
+        $group = $this->resolveGroupFromSlug($validated['group_slug'] ?? null);
 
-        if (!empty($validated['group_id'])) {
-            $group = Group::findOrFail($validated['group_id']);
+        if ($group) {
             $this->authorize('manageTasks', $group);
         }
 
-        $task = DB::transaction(function () use ($request, $validated) {
-            return Task::create([
-                ...$validated,
-                'slug' => Str::uuid()->toString(),
-                'created_by' => $request->user()->id,
-            ]);
+        $task = DB::transaction(function () use ($request, $validated, $group) {
+            return Task::create($this->mapTaskPayload($validated, $group, $request->user()->id));
         });
 
         return $this->success(
@@ -95,26 +92,10 @@ class TaskController extends Controller
 
         $validated = $request->validated();
 
-        if (array_key_exists('group_id', $validated)) {
-            $currentGroup = $task->group;
-            $newGroupId = $validated['group_id'];
+        $resolvedGroup = $this->resolveGroupFromSlug($validated['group_slug'] ?? null);
+        $this->authorizeGroupTransitionIfNeeded($request, $task, $validated, $resolvedGroup);
 
-            if (is_null($newGroupId)) {
-                if ($currentGroup) {
-                    $this->authorize('manageTasks', $currentGroup);
-                }
-            } else {
-                $newGroup = Group::findOrFail($newGroupId);
-
-                if ($currentGroup && $currentGroup->id !== $newGroup->id) {
-                    $this->authorize('manageTasks', $currentGroup);
-                }
-
-                $this->authorize('manageTasks', $newGroup);
-            }
-        }
-
-        $task->update($validated);
+        $task->update($this->mapTaskPayload($validated, $resolvedGroup));
 
         return $this->success(
             new TasksResource($task->load(['group:id,slug,name', 'creator:id,name'])->loadCount('users')),
@@ -129,7 +110,9 @@ class TaskController extends Controller
     {
         $this->authorize('delete', $task);
 
-        $task->delete([]);
+        DB::transaction(function () use ($task) {
+            $task->delete([]);
+        });
 
         return $this->success(null, 'Task deleted successfully');
     }
@@ -161,18 +144,19 @@ class TaskController extends Controller
     {
         $this->authorize('update', $task);
 
-        if ($task->group) {
-            $this->authorize('manageTasks', $task->group);
-        } elseif ($task->created_by !== $request->user()->id) {
-            return $this->error('Only task creator can assign users to personal tasks.', null, 403);
+        $authorizationError = $this->authorizeTaskContextManagement($request, $task, 'assign users to');
+        if ($authorizationError instanceof JsonResponse) {
+            return $authorizationError;
         }
 
         $validated = $request->validated();
         $userIds = $validated['user_ids'];
 
-        $users = User::query()->whereIn('id', $userIds)->get(['id', 'status']);
+        $inactiveUserExists = DB::table('users')
+            ->whereIn('id', $userIds)
+            ->where('status', false)
+            ->exists();
 
-        $inactiveUserExists = $users->contains(fn(User $user) => !$user->status);
         if ($inactiveUserExists) {
             return $this->error('Cannot assign inactive users to task.', null, 422);
         }
@@ -197,14 +181,16 @@ class TaskController extends Controller
             }
         }
 
-        $syncPayload = [];
-        foreach ($userIds as $userId) {
-            $syncPayload[$userId] = [
-                'status' => $validated['status'] ?? 'pending',
-            ];
-        }
+        DB::transaction(function () use ($task, $validated, $userIds) {
+            $syncPayload = [];
+            foreach ($userIds as $userId) {
+                $syncPayload[$userId] = [
+                    'status' => $validated['status'] ?? 'pending',
+                ];
+            }
 
-        $task->users()->syncWithoutDetaching($syncPayload);
+            $task->users()->syncWithoutDetaching($syncPayload);
+        });
 
         $task->load(['group:id,slug,name', 'creator:id,name'])->loadCount('users');
 
@@ -250,10 +236,9 @@ class TaskController extends Controller
     {
         $this->authorize('update', $task);
 
-        if ($task->group) {
-            $this->authorize('manageTasks', $task->group);
-        } elseif ($task->created_by !== $request->user()->id) {
-            return $this->error('Only task creator can unassign users from personal tasks.', null, 403);
+        $authorizationError = $this->authorizeTaskContextManagement($request, $task, 'unassign users from');
+        if ($authorizationError instanceof JsonResponse) {
+            return $authorizationError;
         }
 
         $isAssigned = $task->users()->where('users.id', $user->id)->exists();
@@ -261,10 +246,68 @@ class TaskController extends Controller
             return $this->error('User is not assigned to this task.', null, 404);
         }
 
-        $task->users()->detach($user->id);
+        DB::transaction(function () use ($task, $user) {
+            $task->users()->detach($user->id);
+        });
 
         $task->load(['group:id,slug,name', 'creator:id,name'])->loadCount('users');
 
         return $this->success(new TasksResource($task), 'Assignee removed successfully');
+    }
+
+    private function resolveGroupFromSlug(?string $groupSlug): ?Group
+    {
+        if ($groupSlug === null || $groupSlug === '') {
+            return null;
+        }
+
+        return Group::query()->where('slug', $groupSlug)->firstOrFail();
+    }
+
+    private function mapTaskPayload(array $validated, ?Group $group = null, ?int $createdBy = null): array
+    {
+        $payload = $validated;
+        unset($payload['group_slug']);
+
+        if (array_key_exists('group_slug', $validated)) {
+            $payload['group_id'] = $group?->id;
+        }
+
+        if ($createdBy !== null) {
+            $payload['created_by'] = $createdBy;
+        }
+
+        return $payload;
+    }
+
+    private function authorizeGroupTransitionIfNeeded(Request $request, Task $task, array $validated, ?Group $resolvedGroup): void
+    {
+        if (!array_key_exists('group_slug', $validated)) {
+            return;
+        }
+
+        $currentGroup = $task->group;
+
+        if ($currentGroup && (!$resolvedGroup || $currentGroup->id !== $resolvedGroup->id)) {
+            $this->authorize('manageTasks', $currentGroup);
+        }
+
+        if ($resolvedGroup) {
+            $this->authorize('manageTasks', $resolvedGroup);
+        }
+    }
+
+    private function authorizeTaskContextManagement(Request $request, Task $task, string $action): ?JsonResponse
+    {
+        if ($task->group) {
+            $this->authorize('manageTasks', $task->group);
+            return null;
+        }
+
+        if ($task->created_by !== $request->user()->id) {
+            return $this->error("Only task creator can {$action} personal tasks.", null, 403);
+        }
+
+        return null;
     }
 }

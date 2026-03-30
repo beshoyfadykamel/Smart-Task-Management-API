@@ -4,9 +4,13 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
+use Spatie\Sluggable\HasSlug;
+use Spatie\Sluggable\SlugOptions;
 
 class Task extends Model
 {
+    use HasSlug;
+
     protected $fillable = [
         'title',
         'slug',
@@ -37,6 +41,14 @@ class Task extends Model
     public function getRouteKeyName(): string
     {
         return 'slug';
+    }
+
+    public function getSlugOptions(): SlugOptions
+    {
+        return SlugOptions::create()
+            ->generateSlugsFrom('title')
+            ->saveSlugsTo('slug')
+            ->doNotGenerateSlugsOnUpdate();
     }
 
     public function group()
@@ -96,11 +108,6 @@ class Task extends Model
         });
     }
 
-    public function scopeGroupId($query, $groupId)
-    {
-        return $query->when(!empty($groupId), fn($q) => $q->where('group_id', $groupId));
-    }
-
     public function scopeGroupSlug($query, $groupSlug)
     {
         return $query->when(!empty($groupSlug), function ($q) use ($groupSlug) {
@@ -144,7 +151,6 @@ class Task extends Model
             ->createdFrom($request->input('created_from'))
             ->dueFrom($request->input('due_from'))
             ->dueTo($request->input('due_to'))
-            ->groupId($request->input('group_id'))
             ->groupSlug($request->input('group_slug'))
             ->createdByUser($userId, $request->boolean('mine'))
             ->assignedToUser($userId, $request->boolean('assigned_to_me'))
