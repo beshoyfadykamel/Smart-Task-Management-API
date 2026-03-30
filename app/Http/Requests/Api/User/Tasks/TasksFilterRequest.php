@@ -26,7 +26,6 @@ class TasksFilterRequest extends FormRequest
             'created_from' => 'nullable|date',
             'due_from' => 'nullable|date',
             'due_to' => 'nullable|date|after_or_equal:due_from',
-            'group_id' => 'nullable|integer|exists:groups,id',
             'group_slug' => 'nullable|string|exists:groups,slug',
             'mine' => 'nullable|boolean',
             'assigned_to_me' => 'nullable|boolean',
